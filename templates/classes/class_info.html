@@ -1,0 +1,242 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<style>
+	/*body{
+		background-color: #e2e8f0;
+	}*/
+	.nav-tabs .nav-link.active {
+    	font-weight:bold;
+    	background-color: transparent;
+    	border-bottom:3px solid #dd0000;
+    	border-right: none;
+    	border-left: none;
+    	border-top: none;
+	}
+	.dropdown-item:hover{
+		color:#fff;
+		background-color:#00b3b3
+	}
+	
+
+</style>
+<link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
+
+
+
+
+<section class=" " style="margin-top:70px">
+	<!-- <div class="row">
+		<div class="col-md-2">
+			class name
+		</div>
+	</div> -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ">
+                <nav class="nav-justified ">
+                  <div class="nav nav-tabs " id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Stream</a>
+                    <a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Class Work</a>
+                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">People</a>
+                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a>
+                    
+                  </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                  	<div class="tab-pane fade show active" id="pop1" role="tabpanel" aria-labelledby="pop1-tab">
+                        <div class="pt-3"></div>
+                        <div class="row" style="margin:10px">
+							<button class="btn btn-outline-info" data-toggle="modal" data-target="#editClassModal" ><i class="fas fa-edit"></i> Edit Class</button>
+						</div>
+					    	<div class="row ">
+					    		<div class="col-md-12">
+					    		    <div class="card profile-card-2 rounded" id="cardshadow">
+					                    <div class="card-img-block">
+					                        <img class="img-fluid rounded" src="{{class.title_image.url}}" alt="Card image cap" />
+					                    </div>
+					                    <div class="card-body pt-4">
+					                        <img src="{{class.user.userprofile.profile_pic.url}}" alt="profile-image" class="profile"/>
+					                        <h4 class="card-title">{{class.class_name}}</h4>
+					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated}}</p>
+					                        <hr style="border-top: 1px solid #8c8b8b;">
+					                        <p class="card-text">This class has been created by <strong>{{class.user.username}}</strong> on <strong>{{class.date_created}}</strong></p>
+					                        
+					                       <!--  <div class="icon-block"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"> <i class="fa fa-twitter"></i></a><a href="#"> <i class="fa fa-google-plus"></i></a></div> -->
+					                    </div>
+					                </div>
+					    		</div>						    		
+					    	</div>
+					    	<div class="container">
+		                      	<div class="row" style="margin-top:20px">
+						    		<div class="col-md-2 rounded" id="cardshadow" >
+						    			{% if assignments %}
+						    			{% for assignment in assignments%}
+						    			<h5>{{assignment.title}}</h5>
+						    			{% endfor %}
+						    			{% else %}
+						    			<p>No assignments found</p>
+						    			{% endif %}
+						    		</div>
+						    		<div class="col rounded" id="cardshadow" style="margin-left:20px">
+						    			<h4>card</h4>
+						    		</div>
+							    </div>
+							</div>
+                      	</div>
+                  	<div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
+                       <div class="pt-3"></div>
+                       <div class="row" style="margin:10px">
+							<div class="dropdown">
+							  <button class="btn btn-outline-info " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i>
+							      Create
+							  </button>
+							  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							    <a class="dropdown-item" data-toggle="modal" data-target="#addAssignmentModal" ><i class="fas fa-file-alt"></i> Assignment</a>
+							    <a class="dropdown-item" href="#"><i class="far fa-file-alt"></i> Assignment Quiz</a>
+							    <a class="dropdown-item" href="#"><i class="fas fa-question"></i> Question</a>
+							  </div>
+							</div>
+						</div>
+						{% if assignments %}
+						{% for assignment in assignments%}
+						<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
+						  <!-- <div class="card-header">Header</div> -->
+						  <div class="card-body text-dark">
+						    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
+						    	
+						    	<span style="float:right;">
+						    		<div class="dropleft">
+								    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+								    	</i>
+							    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
+										    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
+										    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
+										</div>
+								    </div>
+							    </span>
+						    </h4>
+						    <hr style="border-top: 1px solid #8c8b8b;">
+
+
+						    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
+							    <div class="card-text">
+							    	<p style="text-align:left;"><i class="fas fa-file-alt"></i>
+							    		{{assignment.title}}
+							    		<small class="text-muted">
+							    			Posted {{assignment.assigning_date}}
+							    		</small><i class="fa fa-clock-o" aria-hidden="true"></i>
+							    		<span style="float:right;color:#ff3333">
+							    			Due date: {{assignment.due_date}}
+							    		</span>
+							    	</p>
+							    	
+							    </div>
+							    <div style="clear: both"></div>
+							</div>
+
+							<div id="collapse{{ forloop.counter }}" class="collapse">
+								<p class="card-text">
+									{% if assignment.file %}
+									<a style="margin-right:3px" href="{{ assignment.file.url }}" target="_blank">
+										<i class="fas fa-eye"> view file</i>
+									</a>
+									<a href="{{ assignment.file.url }}">
+										<i class="fas fa-file-download"> download file</i>
+									</a>
+									{% endif %}
+								</p>
+								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
+								<hr style="border-top: 1px solid #8c8b8b;">
+								
+							</div>
+
+						  </div>
+						</div>
+						{% endfor %}
+						{% endif %}
+
+                  	</div>
+                  <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
+                       <div class="pt-3"></div>
+                        <p>3. There's another way to do this for layouts that doesn't have to put the navbar inside the container, and which doesn't require any CSS or Bootstrap overrides.
+
+						Simply place a div with the Bootstrap container class around the navbar. This will center the links inside the navbar:
+                      
+                  </div>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- The Edit class Modal -->
+<div class="modal fade" id="editClassModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Edit Classroom</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		{% csrf_token %}
+	      		{{create_class_form|crispy}}
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="edit_class">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+
+
+
+<!-- The Add Assignment Modal -->
+<div class="modal fade" id="addAssignmentModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Create Assignment</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		{% csrf_token %}
+	      		{{create_assignment_form|crispy}}
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="create_assignment">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+
+
+
+{% endblock %}

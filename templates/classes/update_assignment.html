@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+	<form method="POST" style="margin-top:80px" novalidate>
+		{% csrf_token %}
+		{{update_assignment_form|crispy}}
+		<button type="submit" class="btn btn-outline-success" name="update_assignment">Update</button>
+	</form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+<div class="row" style="margin-top:70px">
+	<div class="col-md-4 offset-md-6">
+		<div class="card">
+			<div class="card-header text-center">
+				<h1>Log Out</h1>
+			</div>
+			<div class="card-body text-center">
+				<p>Are you sure you want to Log Out!</p>
+				<form method="POST" action="{% url 'logout' %}">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-outline-danger">Sign Out</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{%extends 'main.html'%}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="row" style="margin-top:70px">
+	<div class="col-md-4 offset-md-6">
+		<div class="card">
+			<div class="card-header text-center">
+				<h1>Sign Up</h1>
+			</div>
+			<div class="card-body text-center">
+				<form method="POST" novalidate>
+					{% csrf_token %}
+					{{form|crispy}}
+					<input type="submit" class="btn btn-outline-success" value="Signup">
+				</form>
+				<br>
+				<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
