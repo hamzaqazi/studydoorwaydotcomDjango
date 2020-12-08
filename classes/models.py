@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 from .models import *
 
 
@@ -11,6 +12,7 @@ class ClassRoom(models.Model):
 		('C','C'),
 		('D','D'),
 		)
+	student_key = models.CharField(max_length=50)
 	user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 	date_created = models.DateTimeField(auto_now_add=True, null=True)
 	last_updated = models.DateTimeField(auto_now=True)
@@ -21,6 +23,27 @@ class ClassRoom(models.Model):
 
 	def __str__(self):
 		return self.class_name
+
+
+
+class Student(models.Model):
+	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.SET_NULL)
+	student = models.ForeignKey(User,null=False,on_delete=models.CASCADE)
+	added_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.student.first_name
+
+
+class Instructor(models.Model):
+	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.SET_NULL)
+	instructor = models.ForeignKey(User,null=False,on_delete=models.CASCADE)
+	added_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.instructor.first_name
 
 
 class Assignment(models.Model):
@@ -36,7 +59,7 @@ class Assignment(models.Model):
 		('90','90'),
 		('100','100'),
 		)
-	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.SET_NULL)
+	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	title = models.CharField(max_length=100)
 	instruction = models.TextField(max_length=500,null=True,blank=True)
 	file = models.FileField(null=True,blank=True,upload_to='files/t_assignments/')

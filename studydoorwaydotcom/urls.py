@@ -25,6 +25,7 @@ from accounts.views import (
 	register_view,
 	logout_view,
 	userprofile_view,
+    register_as_teacher_view,
 )
 
 urlpatterns = [
@@ -34,7 +35,8 @@ urlpatterns = [
     path('accounts/login/', login_view,name='login'),
     path('accounts/signup/', register_view,name='signup'),
     path('accounts/logout/', logout_view,name='logout'),
-    path('accounts/userprofile/', userprofile_view,name='userprofile'),
+    path('accounts/userprofile/<int:profile_id>', userprofile_view,name='userprofile'),
+    path('accounts/register_as_teacher/<int:prof_id>', register_as_teacher_view,name='register_as_teacher'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

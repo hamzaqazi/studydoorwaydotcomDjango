@@ -53,11 +53,15 @@
 		height: 50px;
 		border-radius: 50%;
 	}
+	.card:hover{
+     	transform: scale(1.07);
+  		box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+	}
 
 </style>
 
 
-
+<!-- 
 <section class=" " style="margin-top:70px">
     <div class="container">
         <div class="row">
@@ -98,7 +102,7 @@
         </div>
     </div>
 </section>
-
+ -->
 
 
 
@@ -147,7 +151,7 @@
 
 <div class="container">
 	<div class="row" style="margin-top:20px">
-		{% for class in classes %}
+		{% for class in classes_created %}
 		
 		<div class="col-md-3" style="margin-top:20px">
 			<div class="card" id="cardshadow" >
@@ -185,4 +189,47 @@
 	</div>
 </div>
 
+
+
+
+
+<div class="container">
+	<div class="row" style="margin-top:20px">
+		{% for class in classes_joined %}
+		
+		<div class="col-md-3" style="margin-top:20px">
+			<div class="card" id="cardshadow" >
+				<a href="{% url 'class_info' class.id %}">
+				<img class="card-img-top" id="title_image" src="{{class.title_image.url}}" >
+				<div class="card-body"></a>
+					<h5 class="card-title">
+						{{class.class_name}}
+						{% if forloop.counter == 1 %}
+						<i class="fa fa-info float-right" title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}"></i>
+						<!-- <small class="text-muted float-right">info</small> -->
+
+						{%else%}
+
+						<i class="fa fa-info float-right"title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}"></i>
+						
+						{% endif %}
+					</h5>
+					
+					<hr style="border-top: 1px solid #8c8b8b;">
+					
+					<div id="collapse{{ forloop.counter }}" class="collapse">
+						<p class="card-text"><small class="text-muted">Class Created : {{class.date_created}}</small></p>
+						<p class="card-text"><small class="text-muted">Section : {{class.section}}</small></p>
+						<p class="card-text"><small class="text-muted">Subject : {{class.subject}}</small></p>
+						<hr style="border-top: 1px solid #8c8b8b;">
+					</div>
+
+					<img src="{{class.user.userprofile.profile_pic.url}}" alt="Avatar"class="avatar float-right">
+					<p class="card-text text-center">Ask class creator for joining key <b> {{class.user}}</b></p>		
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
 {% endblock %}

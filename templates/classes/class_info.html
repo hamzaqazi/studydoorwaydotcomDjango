@@ -20,20 +20,138 @@
 		color:#fff;
 		background-color:#00b3b3
 	}
-	
+	.md-avatar {
+	  vertical-align: middle;
+	  width: 50px;
+	  height: 50px;
+	}
+	.md-avatar.size-1 {
+	  width: 40px;
+	  height: 40px;
+	}
+	.md-avatar.size-2 {
+	  width: 70px;
+	  height: 70px;
+	}
+	.md-avatar.size-3 {
+	  width: 90px;
+	  height: 90px;
+	}
+	.md-avatar.size-4 {
+	  width: 110px;
+	  height: 110px;
+	}
+
+
+	/* The sidepanel menu */
+.sidepanel {
+  height: auto; /* Specify a height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: absolute; /* Stay in place */
+  z-index: 2; /* Stay on top */
+  top: 45px;
+  left: 0;
+  background-color: #FF9F33; /* Orange*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+}
+
+
+/* The sidepanel links */
+.sidepanel a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+.sidepanel .panel-collapse a{
+	font-size: 15px;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidepanel a:hover {
+  color: #ffa31a;
+}
+
+/* Position and style the close button (top right corner) */
+.sidepanel .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+/* Style the button that is used to open the sidepanel */
+.openbtn {
+  position:absolute;
+  z-index:1;
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #ffa31a;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+.sidepanel hr{
+	background-color: #ffa31a;
+	opacity:0.5;
+}
 
 </style>
 <link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
 
 
 
-
+		
+	
 <section class=" " style="margin-top:70px">
 	<!-- <div class="row">
 		<div class="col-md-2">
 			class name
 		</div>
 	</div> -->
+	
+	<div id="mySidepanel" class="sidepanel">
+	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+	  <div class="list-group">
+		  <a href="#collapse2" data-toggle="collapse" class="list-group-item list-group-item-action fa fa-book">  Classes
+		  </a>
+		  <div id="collapse2" class="panel-collapse collapse">
+	      	<a href="#" class="list-group-item list-group-item-info">
+	      	 Joined Classes
+	      	 <span class="badge badge-pill badge-info float-right">{{classes_joined|length}}</span> 
+	      	</a>
+	      	<a href="#" class="list-group-item list-group-item-info">
+	      	 Created Classes
+	      	 <span class="badge badge-pill badge-info float-right">{{classes_created.count}}</span> 
+	      	</a>
+
+	      </div>
+
+		  <a href="#collapse1" data-toggle="collapse" class="list-group-item " > <i class="fa fa-plus"></i>  Create Class Work
+		  	<span class="float-right"><i class="fas fa-chevron-circle-down"></i></span>
+		  </a>
+		  <div id="collapse1" class="panel-collapse collapse">
+	      	<a href="#" class="list-group-item list-group-item-secondary fas fa-file-alt"> Assignment</a>
+	      	<a href="#" class="list-group-item list-group-item-secondary far fa-file-alt"> Assignment Quiz </a>
+	      	<a href="#" class="list-group-item list-group-item-secondary fas fa-question"> Question</a>  
+	      </div>
+		  <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
+		  
+	  </div>
+	</div>
+
+	<button class="openbtn" onclick="openNav()">&#9776;</button>
+
+
     <div class="container">
         <div class="row">
             <div class="col-md-12 ">
@@ -62,8 +180,8 @@
 					                        <img src="{{class.user.userprofile.profile_pic.url}}" alt="profile-image" class="profile"/>
 					                        <h4 class="card-title">{{class.class_name}}</h4>
 					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated}}</p>
-					                        <hr style="border-top: 1px solid #8c8b8b;">
-					                        <p class="card-text">This class has been created by <strong>{{class.user.username}}</strong> on <strong>{{class.date_created}}</strong></p>
+					                        <hr style="border-top: 1px solid #F06529;">
+					                        <p class="">This class has been created by <b>{{class.user.first_name}}</b> on <strong>{{class.date_created}}</strong></p>
 					                        
 					                       <!--  <div class="icon-block"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"> <i class="fa fa-twitter"></i></a><a href="#"> <i class="fa fa-google-plus"></i></a></div> -->
 					                    </div>
@@ -119,7 +237,7 @@
 								    </div>
 							    </span>
 						    </h4>
-						    <hr style="border-top: 1px solid #8c8b8b;">
+						    <hr style="border-top: 1px solid #F06529;">
 
 
 						    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
@@ -162,10 +280,60 @@
                   	</div>
                   <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
                        <div class="pt-3"></div>
-                        <p>3. There's another way to do this for layouts that doesn't have to put the navbar inside the container, and which doesn't require any CSS or Bootstrap overrides.
+							<div class="card border-0">
+								<div class="card-header">
+									<h4>Instructors</h4>
+								</div>
+								
+								<div class="card-body">
+									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructors are in this course</h6>
+									<p class="card-text">
+										<div class="avatar-group">
+											{% for instructor in instructors %}
+											<div class="row">
+												<div class="col-md-12 ">
+													<a>
+														<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+													</a>
+												</div>
+											</div>
+											{% endfor %}
+										</div>
+									</p>
+								</div>
+							</div>
+							<!-- End of Total Instructors Card  -->
 
-						Simply place a div with the Bootstrap container class around the navbar. This will center the links inside the navbar:
-                      
+							<!-- Total Students Card  -->
+
+							<div class="card border-0">
+								<div class="card-header">
+									<h4>Students</h4>
+								</div>
+								<div class="card-body">
+									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									<p class="card-text">
+										<div class="avatar-group">
+											{% for student in students %}
+											<div class="row">
+												<div class="col-md-12 ">
+													<a>
+														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
+													</a>
+												</div>
+											</div>
+											{% endfor %}
+										</div>
+									</p>
+								</div>
+							</div>
+							<!-- End of Total Instructors Card  -->
+
+
+
+
                   </div>
                   
                 </div>
@@ -237,6 +405,16 @@
 	</div>
 </div>
 
+<script>
+	/* Set the width of the sidebar to 250px (show it) */
+	function openNav() {
+	  document.getElementById("mySidepanel").style.width = "300px";
+	}
 
+	/* Set the width of the sidebar to 0 (hide it) */
+	function closeNav() {
+	  document.getElementById("mySidepanel").style.width = "0";
+	}
+</script>
 
 {% endblock %}

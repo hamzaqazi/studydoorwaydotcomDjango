@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from validate_email import validate_email
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 from django.contrib.auth import (
 	authenticate,
@@ -40,6 +41,8 @@ class UserRegisterForm(forms.ModelForm):
 			'email',
 			'email2',
 			'password',
+			'first_name',
+			'last_name',
 		]
 
 	def clean(self, *args, **kwargs):
@@ -57,10 +60,32 @@ class UserRegisterForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
 	class Meta:
 		model = UserProfile
+		widgets = {
+		'phone': PhoneNumberPrefixWidget(initial='PK'),
+		'address':forms.Textarea(attrs={'rows':2}),
+		'bio':forms.Textarea(attrs={'rows':3}),
+        }
 		fields = '__all__'
-		exclude = ['user']
+		exclude = ['user','role']
 		
-				
+class TeacherProfileForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = [
+			'first_name',
+			'last_name',
+		]
+
+class RegisterAsTeacherForm(forms.ModelForm):
+	class Meta:
+		model = UserProfile
+		widgets = {
+		'phone': PhoneNumberPrefixWidget(initial='PK'),
+        }
+		fields = [
+			'phone',
+			'role',
+		]			
 				
 
 # class ProfileUpdateForm(forms.ModelForm):

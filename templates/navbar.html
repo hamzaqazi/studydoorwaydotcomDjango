@@ -23,15 +23,15 @@
     </div>
     <ul class="navbar-nav ml-auto">
       {% if user.is_authenticated %}
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link" href="{% url 'create_class' %}">Create Class</a>
-      </li>
+      </li> -->
       <li class="nav-item active dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <strong>Hello!{{user.username}}</strong>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item fa fa-user-circle" href="{% url 'userprofile' %}"> Profile</a>
+          <a class="dropdown-item fa fa-user-circle" href="{% url 'userprofile' user.userprofile.id  %}"> Profile</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item fa fa-book" href="{% url 'create_class' %}"> Classes</a>
           <div class="dropdown-divider"></div>

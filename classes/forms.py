@@ -18,3 +18,4 @@ class CreateAssignment(ModelForm):
 		widgets = {'due_date' : DateInput()}
 		fields = '__all__'
 		exclude = ['user','class_room']
+
