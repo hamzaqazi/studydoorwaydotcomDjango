@@ -3,5 +3,190 @@
 
 {% block content %}
 
+<div class="container">
+        <div class="row">
+            <div class="col-md-12 ">
+                <nav class="nav-justified ">
+                  <div class="nav nav-tabs " id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Stream</a>
+                    <a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Class Work</a>
+                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">People</a>
+                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a>
+                    
+                  </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                  	<div class="tab-pane fade show active" id="pop1" role="tabpanel" aria-labelledby="pop1-tab">
+                        <div class="pt-3"></div>
+					    	<div class="row ">
+					    		<div class="col-md-12">
+					    		    <div class="card profile-card-2 rounded" id="cardshadow">
+					                    <div class="card-img-block">
+					                        <img class="img-fluid rounded" src="{{class.title_image.url}}" alt="Card image cap" />
+					                    </div>
+					                    <div class="card-body pt-4">
+					                        <img src="{{class.user.userprofile.profile_pic.url}}" alt="profile-image" class="profile"/>
+					                        <h4 class="card-title">{{class.class_name}}</h4>
+					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated}}</p>
+					                        <hr style="border-top: 1px solid #F06529;">
+					                        <p class="">This class has been created by <b>{{class.user.first_name}}</b> on <strong>{{class.date_created}}</strong></p>
+					                        
+					                       <!--  <div class="icon-block"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"> <i class="fa fa-twitter"></i></a><a href="#"> <i class="fa fa-google-plus"></i></a></div> -->
+					                    </div>
+					                </div>
+					    		</div>						    		
+					    	</div>
+					    	<div class="container">
+		                      	<div class="row" style="margin-top:20px">
+						    		<div class="col-md-2 rounded" id="cardshadow" >
+						    			{% if assignments %}
+						    			{% for assignment in assignments%}
+						    			<h5>{{assignment.title}}</h5>
+						    			{% endfor %}
+						    			{% else %}
+						    			<p>No assignments found</p>
+						    			{% endif %}
+						    		</div>
+						    		<div class="col rounded" id="cardshadow" style="margin-left:20px">
+						    			<h4>card</h4>
+						    		</div>
+							    </div>
+							</div>
+                      	</div>
+                  	<div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
+                       <div class="pt-3"></div>
+                       <div class="row" style="margin:10px">
+							<div class="dropdown">
+							  <button class="btn btn-outline-info " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i>
+							      Create
+							  </button>
+							  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							    <a class="dropdown-item" data-toggle="modal" data-target="#addAssignmentModal" ><i class="fas fa-file-alt"></i> Assignment</a>
+							    <a class="dropdown-item" href="#"><i class="far fa-file-alt"></i> Assignment Quiz</a>
+							    <a class="dropdown-item" href="#"><i class="fas fa-question"></i> Question</a>
+							  </div>
+							</div>
+						</div>
+						{% if assignments %}
+						{% for assignment in assignments%}
+						<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
+						  <!-- <div class="card-header">Header</div> -->
+						  <div class="card-body text-dark">
+						    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
+						    	
+						    	<span style="float:right;">
+						    		<div class="dropleft">
+								    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+								    	</i>
+							    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
+										    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
+										    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
+										</div>
+								    </div>
+							    </span>
+						    </h4>
+						    <hr style="border-top: 1px solid #F06529;">
+
+
+						    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
+							    <div class="card-text">
+							    	<p style="text-align:left;"><i class="fas fa-file-alt"></i>
+							    		{{assignment.title}}
+							    		<small class="text-muted">
+							    			Posted {{assignment.assigning_date}}
+							    		</small><i class="fa fa-clock-o" aria-hidden="true"></i>
+							    		<span style="float:right;color:#ff3333">
+							    			Due date: {{assignment.due_date}}
+							    		</span>
+							    	</p>
+							    	
+							    </div>
+							    <div style="clear: both"></div>
+							</div>
+
+							<div id="collapse{{ forloop.counter }}" class="collapse">
+								<p class="card-text">
+									{% if assignment.file %}
+									<a style="margin-right:3px" href="{{ assignment.file.url }}" target="_blank">
+										<i class="fas fa-eye"> view file</i>
+									</a>
+									<a href="{{ assignment.file.url }}">
+										<i class="fas fa-file-download"> download file</i>
+									</a>
+									{% endif %}
+								</p>
+								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
+								<hr style="border-top: 1px solid #8c8b8b;">
+								
+							</div>
+
+						  </div>
+						</div>
+						{% endfor %}
+						{% endif %}
+
+                  	</div>
+                  <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
+                       <div class="pt-3"></div>
+							<div class="card border-0">
+								<div class="card-header">
+									<h4>Instructors</h4>
+								</div>
+								
+								<div class="card-body">
+									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructors are in this course</h6>
+									<p class="card-text">
+										<div class="avatar-group">
+											{% for instructor in instructors %}
+											<div class="row">
+												<div class="col-md-12 ">
+													<a>
+														<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+													</a>
+												</div>
+											</div>
+											{% endfor %}
+										</div>
+									</p>
+								</div>
+							</div>
+							<!-- End of Total Instructors Card  -->
+
+							<!-- Total Students Card  -->
+
+							<div class="card border-0">
+								<div class="card-header">
+									<h4>Students</h4>
+								</div>
+								<div class="card-body">
+									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									<p class="card-text">
+										<div class="avatar-group">
+											{% for student in students %}
+											<div class="row">
+												<div class="col-md-12 ">
+													<a>
+														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
+													</a>
+												</div>
+											</div>
+											{% endfor %}
+										</div>
+									</p>
+								</div>
+							</div>
+							<!-- End of Total Instructors Card  -->
+
+
+
+
+                  </div>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

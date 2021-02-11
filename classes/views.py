@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import CreateClassRoom,CreateAssignment
+from .forms import *
 from django.contrib import messages
 from .models import *
 from accounts.models import *
@@ -10,27 +10,54 @@ from accounts.models import *
 def create_class_view(request):
 	
 	form = CreateClassRoom()
+	join_class_form = JoinClassRoom()
 	classes_created = ClassRoom.objects.filter(user=request.user)
 	student = Student.objects.filter(student=request.user)
 	# student = get_object_or_404(Student, pk=request.user.id)
 	# s_class_id = student.class_room.id
 	# classes_joined = ClassRoom.objects.filter(id=s_class_id)
-	classes_joined = []
+	classes_joined = [] 
 	for student_info in student:
 		classes_joined.append(student_info.class_room)
 		# if settings.DEBUG:
 		# 	print(student_info.class_room)
 
 	if request.method =='POST':
-		form = CreateClassRoom(request.POST,request.FILES)
-		if form.is_valid():
-			instance = form.save(commit=False)
-			instance.user = request.user
-			instance.save()
-			classroom = ClassRoom.objects.get(id=instance.id)
-			messages.success(request,'Classrooom created successfully')
-			return redirect('/classes/create_class/')
-	context = {'form': form, 'classes_created': classes_created,'classes_joined': classes_joined,}
+		if 'create_classroom' in request.POST:
+			form = CreateClassRoom(request.POST,request.FILES)
+			if form.is_valid():
+				instance = form.save(commit=False)
+				instance.user = request.user
+				instance.save()
+				classroom = ClassRoom.objects.get(id=instance.id)
+				messages.success(request,'Classrooom created successfully')
+				return redirect('/classes/create_class/')
+			else:
+				messages.warning(request,'Error! Classroom not created Please correct the error in the form')
+		if 'join_classroom' in request.POST:
+			join_class_form = JoinClassRoom(request.POST)
+			if join_class_form.is_valid():
+				student_key = request.POST.get('student_key')
+				class_room = ClassRoom.objects.get(student_key=student_key)
+				student = request.user
+				if Student.objects.filter(student=student,class_room=class_room).exists():
+					messages.warning(request,'you are already a student in this classroom  '+ class_room.class_name)
+				elif Instructor.objects.filter(instructor=student,class_room=class_room).exists():
+					messages.warning(request,'you are the creator of this class [' + class_room.class_name + '] you can not join this class as student')
+				else:					
+					new_student = Student(student=student,class_room=class_room)
+					new_student.save()
+					print(new_student)
+					messages.success(request,'Classrooom joined successfully')
+					return redirect('/classes/create_class/')
+
+	context = {
+		'form': form,
+		'join_class_form': join_class_form,
+		'classes_created': classes_created,
+		'classes_joined': classes_joined,
+	}
+	
 	return render(request,'classes/create_class.html',context)
 
 
@@ -45,9 +72,8 @@ def class_info_view(request,id):
 
 
 	classroom = ClassRoom.objects.get(id=id)
-	if Student.objects.filter(student=student, class_room=classroom).exists():
-
-		return render(request, 'classes/s_class_info.html')
+	# if Student.objects.filter(student=student, class_room=classroom).exists():
+	# 	return render(request, 'classes/s_class_info.html')
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
@@ -55,13 +81,13 @@ def class_info_view(request,id):
 	create_assignment_form = CreateAssignment()
 	if request.method == 'POST':
 		if 'edit_class' in request.POST:
-			create_class_form = CreateClassRoom(request.POST, request.FILES, instance=classroom)
+			create_class_form = EditClassRoom(request.POST, request.FILES, instance=classroom)
 			if create_class_form.is_valid():
 				create_class_form.save()
 				messages.success(request,'classroom updated successfully')
 				return redirect('class_info',id=id)
 			else:
-				messages.success(request,'error! classroom not updated')
+				messages.warning(request, create_class_form.errors)
 
 		if 'create_assignment' in request.POST:
 			create_assignment_form = CreateAssignment(request.POST, request.FILES)
@@ -84,6 +110,10 @@ def class_info_view(request,id):
 		'classes_joined':classes_joined,
 	}
 	return render(request,'classes/class_info.html',context)
+
+
+def s_class_info_view(request,id):
+	return render(request, 'classes/s_class_info.html')
 
 @login_required
 def update_assignment_view(request,class_id,assignment_id):

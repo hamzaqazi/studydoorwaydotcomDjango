@@ -12,14 +12,14 @@ class ClassRoom(models.Model):
 		('C','C'),
 		('D','D'),
 		)
-	student_key = models.CharField(max_length=50)
+	student_key = models.CharField(max_length=50,unique=True)
 	user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 	date_created = models.DateTimeField(auto_now_add=True, null=True)
 	last_updated = models.DateTimeField(auto_now=True)
 	class_name = models.CharField(max_length= 250)
 	section = models.CharField(max_length= 200, null=True, choices=SECTION)
 	subject = models.CharField(max_length= 250,null=True)
-	title_image = models.ImageField(null=True,blank=True,default='profile pic.jpg',upload_to='classTitleImages/')
+	title_image = models.ImageField(null=True,blank=True,default='classTitle image.jpg',upload_to='classTitleImages/')
 
 	def __str__(self):
 		return self.class_name

@@ -61,61 +61,14 @@
 </style>
 
 
-<!-- 
-<section class=" " style="margin-top:70px">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center ">
-                <nav class="nav-justified ">
-                  <div class="nav nav-tabs " id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Popular Cars</a>
-                    <a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Upcoming</a>
-                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Newly Launched</a>
-                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">People</a>
-                    
-                  </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                  <div class="tab-pane fade show active" id="pop1" role="tabpanel" aria-labelledby="pop1-tab">
-                        <div class="pt-3"></div>
-                        <p>1. There's another way to do this for layouts that doesn't have to put the navbar inside the container, and which doesn't require any CSS or Bootstrap overrides.
-
-						Simply place a div with the Bootstrap container class around the navbar. This will center the links inside the navbar:</p>
-                      </div>
-                  <div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
-                       <div class="pt-3"></div>
-                        <p>2. There's another way to do this for layouts that doesn't have to put the navbar inside the container, and which doesn't require any CSS or Bootstrap overrides.
-
-						Simply place a div with the Bootstrap container class around the navbar. This will center the links inside the navbar:
-                      
-                  </div>
-                  <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
-                       <div class="pt-3"></div>
-                        <p>3. There's another way to do this for layouts that doesn't have to put the navbar inside the container, and which doesn't require any CSS or Bootstrap overrides.
-
-						Simply place a div with the Bootstrap container class around the navbar. This will center the links inside the navbar:
-                      
-                  </div>
-                  
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
- -->
-
-
-
-
-
-
 
 <div class="row justify-content-center" style="margin-top:70px">
-	<button class="btn btn-outline-info" data-toggle="modal" data-target="#myModal" ><i class="fa fa-plus-circle"></i> Create Class</button>
+	<button style="margin-right:5px;" class="btn btn-outline-info" data-toggle="modal" data-target="#myModalCreate" ><i class="fa fa-plus-circle"></i> Create Class</button>
+	<button class="btn btn-outline-info" data-toggle="modal" data-target="#myModalJoin" ><i class="fa fa-handshake-o"></i> Join Class</button>
 </div>
 
-<!-- The Modal -->
-<div class="modal fade" id="myModal">
+<!-- The Modal Create Classroom -->
+<div class="modal fade" id="myModalCreate">
 	<div class="modal-dialog">
 	  <div class="modal-content">
 	  
@@ -136,7 +89,7 @@
 		    <!-- Modal footer -->
 		    <div class="modal-footer">
 		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-		      <button type="submit" class="btn btn-outline-success">Save</button>
+		      <button type="submit" class="btn btn-outline-success" name="create_classroom">Save</button>
 		    </div>
 	    </form>
 	    
@@ -145,7 +98,35 @@
 </div>
 
 
+<!-- The Modal Join Classroom -->
+<div class="modal fade" id="myModalJoin">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Enroll in a new Classroom</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
 
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		{% csrf_token %}
+	      		{{join_class_form|crispy}}
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="join_classroom">Join Classroom</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
 
 
 
@@ -181,7 +162,8 @@
 					</div>
 
 					<img src="{{class.user.userprofile.profile_pic.url}}" alt="Avatar"class="avatar float-right">
-					<p class="card-text text-center">Ask class creator for joining key <b> {{class.user}}</b></p>		
+					<p class="card-text text-center">Ask class creator <b> {{class.user}}</b> for joining key </p>
+					<p class="card-text text-center"><b><i class="fas fa-phone"></i>{{class.user.userprofile.phone}}</b></p>		
 				</div>
 			</div>
 		</div>
@@ -199,7 +181,7 @@
 		
 		<div class="col-md-3" style="margin-top:20px">
 			<div class="card" id="cardshadow" >
-				<a href="{% url 'class_info' class.id %}">
+				<a href="{% url 's_class_info' class.id %}">
 				<img class="card-img-top" id="title_image" src="{{class.title_image.url}}" >
 				<div class="card-body"></a>
 					<h5 class="card-title">
