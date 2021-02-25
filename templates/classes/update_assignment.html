@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container">
-	<form method="POST" style="margin-top:80px" novalidate>
+	<form method="POST"  enctype="multipart/form-data" style="margin-top:80px" novalidate>
 		{% csrf_token %}
 		{{update_assignment_form|crispy}}
 		<button type="submit" class="btn btn-outline-success" name="update_assignment">Update</button>

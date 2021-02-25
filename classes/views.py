@@ -77,9 +77,24 @@ def class_info_view(request,id):
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
+
 	create_class_form = CreateClassRoom(instance=classroom)
 	create_assignment_form = CreateAssignment()
+	create_announcement_form = CreateAnnouncement()
+	announcements = Announcement.objects.filter(class_room=classroom)
 	if request.method == 'POST':
+		if 'announce' in request.POST:
+			
+			announcement_text = request.POST.get('announcement_text')
+			announcement_file = request.FILES.get('announcement_file',None)
+			if not announcement_file:
+				Announcement.objects.create(announcement_text=announcement_text,user=request.user,class_room=classroom)
+			else:
+				# announcement_file = request.FILES['announcement_file']
+				Announcement.objects.create(announcement_text=announcement_text,announcement_file=announcement_file,user=request.user,class_room=classroom)
+			
+			return redirect('class_info',id=id)
+			
 		if 'edit_class' in request.POST:
 			create_class_form = EditClassRoom(request.POST, request.FILES, instance=classroom)
 			if create_class_form.is_valid():
@@ -108,12 +123,23 @@ def class_info_view(request,id):
 		'instructors':instructors,
 		'classes_created':classes_created,
 		'classes_joined':classes_joined,
+		'announcements':announcements,
 	}
 	return render(request,'classes/class_info.html',context)
 
-
+@login_required
 def s_class_info_view(request,id):
-	return render(request, 'classes/s_class_info.html')
+	assignments = Assignment.objects.filter(class_room = id)
+	students = Student.objects.filter(class_room= id)
+	instructors = Instructor.objects.filter(class_room= id)
+
+	context = {
+		'class':get_object_or_404(ClassRoom, pk=id),
+		'assignments':assignments,
+		'instructors':instructors,
+		'students':students,
+	}
+	return render(request, 'classes/s_class_info.html',context)
 
 @login_required
 def update_assignment_view(request,class_id,assignment_id):

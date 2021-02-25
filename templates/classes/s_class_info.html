@@ -1,9 +1,15 @@
 {% extends 'main.html' %}
+{% load static %}
+{% load humanize %}
+
 
 
 {% block content %}
 
-<div class="container">
+
+<link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static '/css/s_class_info.css' %}">
+<div class="container" style="margin-top:70px">
         <div class="row">
             <div class="col-md-12 ">
                 <nav class="nav-justified ">
@@ -11,7 +17,7 @@
                     <a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Stream</a>
                     <a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Class Work</a>
                     <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">People</a>
-                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a>
+                    <!-- <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a> -->
                     
                   </div>
                 </nav>
@@ -27,7 +33,7 @@
 					                    <div class="card-body pt-4">
 					                        <img src="{{class.user.userprofile.profile_pic.url}}" alt="profile-image" class="profile"/>
 					                        <h4 class="card-title">{{class.class_name}}</h4>
-					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated}}</p>
+					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated|timesince}} ago</p>
 					                        <hr style="border-top: 1px solid #F06529;">
 					                        <p class="">This class has been created by <b>{{class.user.first_name}}</b> on <strong>{{class.date_created}}</strong></p>
 					                        
@@ -37,25 +43,40 @@
 					    		</div>						    		
 					    	</div>
 					    	<div class="container">
-		                      	<div class="row" style="margin-top:20px">
-						    		<div class="col-md-2 rounded" id="cardshadow" >
+		                      	<div class="row" >
+						    		<div class="col-md-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;">
 						    			{% if assignments %}
 						    			{% for assignment in assignments%}
-						    			<h5>{{assignment.title}}</h5>
+						    			<a href="">{{assignment.title}}</a>
+						    			
 						    			{% endfor %}
 						    			{% else %}
-						    			<p>No assignments found</p>
+						    			<p>No assignments found do you agreee with my decision and after all iam your native speaker so be carefull</p>
 						    			{% endif %}
 						    		</div>
-						    		<div class="col rounded" id="cardshadow" style="margin-left:20px">
-						    			<h4>card</h4>
+						    		<div class="col rounded" style="margin-top:20px">
+						    			<div class="row rounded" id="cardshadow" >
+						    				<div class="col rounded">
+						    					<div class="chip">
+												  <img src="{% static 'images/nav logo.png' %}" alt="Person" width="96" height="96">
+												  <b data-toggle="collapse" data-target="#collapseAnnounce" aria-expanded="false"aria-controls="collapseAnnounce">Announce something to your class</b>
+												</div>
+
+							    				<div id="collapseAnnounce" class="collapse">
+													<p class="card-text">Class Created :</p>
+													<p class="card-text">Section :</p>
+													<p class="card-text">Subject :</p>
+													<hr style="border-top: 1px solid #8c8b8b;">
+												</div>
+											</div>
+						    			</div>
 						    		</div>
 							    </div>
 							</div>
                       	</div>
                   	<div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
                        <div class="pt-3"></div>
-                       <div class="row" style="margin:10px">
+                       <!-- <div class="row" style="margin:10px">
 							<div class="dropdown">
 							  <button class="btn btn-outline-info " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i>
 							      Create
@@ -66,7 +87,7 @@
 							    <a class="dropdown-item" href="#"><i class="fas fa-question"></i> Question</a>
 							  </div>
 							</div>
-						</div>
+						</div> -->
 						{% if assignments %}
 						{% for assignment in assignments%}
 						<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
@@ -74,7 +95,7 @@
 						  <div class="card-body text-dark">
 						    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
 						    	
-						    	<span style="float:right;">
+						    	<!-- <span style="float:right;">
 						    		<div class="dropleft">
 								    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
 								    	</i>
@@ -83,7 +104,7 @@
 										    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
 										</div>
 								    </div>
-							    </span>
+							    </span> -->
 						    </h4>
 						    <hr style="border-top: 1px solid #F06529;">
 
@@ -113,10 +134,15 @@
 									<a href="{{ assignment.file.url }}">
 										<i class="fas fa-file-download"> download file</i>
 									</a>
+									{% else %}
+									<h6>No file included </h6>
 									{% endif %}
 								</p>
 								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
 								<hr style="border-top: 1px solid #8c8b8b;">
+								<a style="margin-right:3px" href="" data-toggle="modal" data-target="#submitAssignmentModal">
+									<i class="fa fa-upload"> Submit Assignment</i>
+								</a>
 								
 							</div>
 
@@ -141,8 +167,12 @@
 											<div class="row">
 												<div class="col-md-12 ">
 													<a>
-														<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+														<div class="chip">
+														  <img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+														  <b>{{instructor.instructor.first_name}} {{instructor.instructor.last_name}}</b>
+														</div>
+														<!-- <img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b> -->
 													</a>
 												</div>
 											</div>
@@ -164,11 +194,31 @@
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for student in students %}
-											<div class="row">
+											<div class="row"  style="border-left:3px solid #F06529;margin-top:5px;">
 												<div class="col-md-12 ">
 													<a>
-														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
+														{% if student.student.username == request.user.username %}
+														<div class="chip">
+														  <img src="{{student.student.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+														  <b style="color:#8dd457">{{student.student.first_name}} {{student.student.last_name}} (Me)</b>
+														</div>
+														<!-- <img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class=" font-size-sm" style="color:#8dd457">{{student.student.first_name}} {{student.student.last_name}} (Me)</b> -->
+														<span class="fa fa-clock-o " style="color:#8dd457">
+															Joined {{student.added_at|timesince}} ago
+														</span>
+														{% else %}
+														<div class="chip">
+														  <img src="{{student.student.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+														  <b>{{student.student.first_name}} {{student.student.last_name}}</b>
+														</div>
+														<!-- <img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{student.student.first_name}} {{student.student.last_name}}</b> -->
+														<span class="fa fa-clock-o" style="color:#7bc5ed">
+															Joined {{student.added_at|timesince}} ago
+														</span>
+														
+														{% endif %}
 													</a>
 												</div>
 											</div>
@@ -188,5 +238,36 @@
             </div>
         </div>
     </div>
+
+
+    <!-- The Submit Assignment Modal -->
+<div class="modal fade" id="submitAssignmentModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Submit Assignment</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="edit_class">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+
 
 {% endblock %}

@@ -25,6 +25,15 @@ class ClassRoom(models.Model):
 		return self.class_name
 
 
+class Announcement(models.Model):
+	user = models.ForeignKey(User,null=False,on_delete=models.CASCADE)
+	announcement_text = models.TextField(max_length=500)
+	announcement_file = models.FileField(blank=True,upload_to='files/announcement_file/')
+	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
+	announcement_date = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.announcement_text
 
 class Student(models.Model):
 	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.SET_NULL)
@@ -62,7 +71,7 @@ class Assignment(models.Model):
 	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	title = models.CharField(max_length=100)
 	instruction = models.TextField(max_length=500,null=True,blank=True)
-	file = models.FileField(null=True,blank=True,upload_to='files/t_assignments/')
+	file = models.FileField(blank=True,upload_to='files/t_assignments/')
 	points = models.CharField(max_length=100, null=True, choices=POINTS, default=100)
 	due_date = models.DateField()
 	assigning_date = models.DateField(auto_now_add=True)

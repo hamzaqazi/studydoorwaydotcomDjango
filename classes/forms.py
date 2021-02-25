@@ -43,3 +43,11 @@ class JoinClassRoom(forms.Form):
 		if not ClassRoom.objects.filter(student_key=student_key).exists():
 			raise forms.ValidationError('No classroom exists with provided key')
 		return student_key
+
+class CreateAnnouncement(ModelForm):
+	class Meta:
+		model = Announcement
+		# widgets = {
+		# 	'announcement_text':forms.Textarea(attrs={'rows':3,'cols':15})
+		# }
+		fields = '__all__'
