@@ -1,4 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from django.contrib import messages
@@ -62,6 +64,14 @@ def create_class_view(request):
 
 
 @login_required
+def announcement_likes_view(request,pk,class_id):
+	announcement = get_object_or_404(Announcement, id=request.POST.get('announcement_id'))
+	announcement.likes.add(request.user)
+
+	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
+
+
+@login_required
 def class_info_view(request,id):
 	student = request.user
 	classes_created = ClassRoom.objects.filter(user=request.user)
@@ -70,13 +80,11 @@ def class_info_view(request,id):
 	for student_info in student_classes:
 		classes_joined.append(student_info.class_room)
 
-
 	classroom = ClassRoom.objects.get(id=id)
-	# if Student.objects.filter(student=student, class_room=classroom).exists():
-	# 	return render(request, 'classes/s_class_info.html')
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
+
 
 	create_class_form = CreateClassRoom(instance=classroom)
 	create_assignment_form = CreateAssignment()

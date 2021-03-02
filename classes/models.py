@@ -31,6 +31,10 @@ class Announcement(models.Model):
 	announcement_file = models.FileField(blank=True,upload_to='files/announcement_file/')
 	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	announcement_date = models.DateTimeField(auto_now_add=True)
+	likes = models.ManyToManyField(User, related_name = 'announcement_likes')
+
+	def total_likes(self):
+		return self.likes.count()
 
 	def __str__(self):
 		return self.announcement_text

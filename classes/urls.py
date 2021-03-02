@@ -7,5 +7,6 @@ urlpatterns = [
 	path('classes/s_class_info/<int:id>/',views.s_class_info_view,name='s_class_info'),
 	path('classes/class_info/<int:class_id>/<int:assignment_id>/udate',views.update_assignment_view,name='update_assignment'),
 	path('classes/class_info/<int:class_id>/<int:assignment_id>/delete',views.delete_assignment_view,name='delete_assignment'),
+	path('classes/like/<int:pk>/<int:class_id>',views.announcement_likes_view,name='announcement_likes'),
 
 ]

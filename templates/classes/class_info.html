@@ -94,14 +94,14 @@
 						    			<a href="">{{assignment.title}}</a>
 						    			{% endfor %}
 						    			{% else %}
-						    			<p>No assignments found</p>
+						    			<p>You didn't assign any work yet</p>
 						    			{% endif %}
 						    		</div>
 						    		<div class="col rounded" style="margin-top:20px">
 						    			<div class="row rounded" id="cardshadow" >
 						    				<div class="col rounded">
 						    					<div class="chip">
-												  <img src="{% static 'images/nav logo.png' %}" alt="Person" width="96" height="96">
+												  <img src="{{request.user.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
 												  <b data-toggle="collapse" data-target="#collapseAnnounce" aria-expanded="false"aria-controls="collapseAnnounce">Announce something to your class</b>
 												</div>
 
@@ -174,7 +174,13 @@
 												  </div>
 												  <div class="bg-white p-2" style="border-top: 1px solid #F06529">
 												      <div class="d-flex flex-row fs-12">
-												          <div class="like p-2 cursor"><i class="fa fa-thumbs-o-up"></i><span class="ml-1">Like</span></div>
+												      	<form action="{% url 'announcement_likes' announcement.pk class.id %}" method="POST" id="ann_like_form">
+												      		{% csrf_token %}
+												          <div class="like p-2 cursor">
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">Like</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	</button>
+												          </div>
+												        </form>
 												          <div class="like p-2 cursor action-collapse" data-toggle="collapse" aria-expanded="true" aria-controls="collapse-1{{announcement.id}}" href="#collapse-1{{announcement.id}}"><i class="far fa-comment-dots"></i><span class="ml-1">Comment</span></div>
 												      </div>
 												  </div>
