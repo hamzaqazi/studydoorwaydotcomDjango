@@ -39,6 +39,15 @@ class Announcement(models.Model):
 	def __str__(self):
 		return self.announcement_text
 
+class Comment(models.Model):
+	announcement = models.ForeignKey(Announcement,related_name = 'comments',on_delete=models.CASCADE)
+	user = models.ForeignKey(User,on_delete=models.CASCADE)
+	comment_text = models.TextField(max_length=255)
+	comment_date = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.comment_text 
+
 class Student(models.Model):
 	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.SET_NULL)
 	student = models.ForeignKey(User,null=False,on_delete=models.CASCADE)

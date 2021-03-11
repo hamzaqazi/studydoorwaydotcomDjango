@@ -25,6 +25,9 @@
     <ul class="navbar-nav ml-auto">
       {% if user.is_authenticated %}
       <li class="nav-item">
+        <a class="nav-link" href="{% url 'forum_home' %}">Internet Forum</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'create_class' %}">Classes</a>
       </li>
       <li class="nav-item">

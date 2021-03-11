@@ -15,8 +15,8 @@
 			class name
 		</div>
 	</div> -->
-	
-	<div id="mySidepanel" class="sidepanel">
+	{% include 'side_panel.html' %}
+<!-- 	<div id="mySidepanel" class="sidepanel">
 	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 	  <div class="list-group">
 		  <a href="#collapse2" data-toggle="collapse" class="list-group-item list-group-item-action fa fa-book">  Classes
@@ -47,7 +47,7 @@
 	  </div>
 	</div>
 
-	<button class="openbtn" onclick="openNav()">&#9776;</button>
+	<button class="openbtn" onclick="openNav()">&#9776;</button> -->
 
 
     <div class="container">
@@ -162,43 +162,54 @@
 															</a>
 												      	</div>	
 												      	
-
-												      	
-												      	<!-- <div class="chip">
-														  <img src="{{announcement.announcement_file.url}}" alt="Download File" width="96" height="96">
-														  <b>File</b>
-														</div> -->
-												      	
 												      </div>
 												      {% endif %}
 												  </div>
 												  <div class="bg-white p-2" style="border-top: 1px solid #F06529">
 												      <div class="d-flex flex-row fs-12">
-												      	<form action="{% url 'announcement_likes' announcement.pk class.id %}" method="POST" id="ann_like_form">
+												      	<form action="{% url 'announcement_likes' announcement.id class.id %}" method="POST" novalidate>
 												      		{% csrf_token %}
 												          <div class="like p-2 cursor">
-												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">Like</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	{% if request.user not in announcement.likes.all %}
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">like</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
 												          	</button>
+												          	{% else %}
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">Unlike</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	</button> 
+												          	{% endif %}
+
 												          </div>
 												        </form>
-												          <div class="like p-2 cursor action-collapse" data-toggle="collapse" aria-expanded="true" aria-controls="collapse-1{{announcement.id}}" href="#collapse-1{{announcement.id}}"><i class="far fa-comment-dots"></i><span class="ml-1">Comment</span></div>
+												          <div class="like p-2 cursor action-collapse" data-toggle="collapse" aria-expanded="true" aria-controls="collapse-1{{announcement.id}}" href="#collapse-1{{announcement.id}}"><i class="far fa-comment-dots"></i><span class="ml-1">Comment</span> <span class="badge badge-pill badge-info">{{announcement.comments.all.count}}</span></div>
 												      </div>
 												  </div>
 												  <div id="collapse-1{{announcement.id}}" class="collapse" style="margin-bottom:10px;border-top:1px solid #F06529" data-parent="#myGroup">
 
-
+												  	{% if not announcement.comments.all %}
+												  	<div class="bg-white p-2 text-center">
+												  		<p>No Comments yet ... Add one </p>
+												  	</div>
+												  	{% else %}
+												  	{% for comment in announcement.comments.all %}
 												  	  <div class="bg-white p-2" style="margin-left:15px;">
 													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
-													          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{announcement.user.first_name}}</span><span class="date text-black-50">Commented - {{announcement.announcement_date|timesince}} ago</span></div>
+													          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{comment.user.first_name}}</span><span class="date text-black-50">Commented - {{comment.comment_date|timesince}} ago</span></div>
 													      </div>
 													      <div class="mt-2">
-													          <p class="comment-text">{{announcement.announcement_text}}</p>
+													          <p class="comment-text">{{comment.comment_text}}</p>
 													      </div>
 													  </div>
+													  <hr style="border-top: 1px solid #d1c7c7;">
+													  {% endfor %}
+													  {% endif %}
+													  <hr style="border-top: 1px solid #d1c7c7;">
 
-
-												      <div class="d-flex flex-row align-items-start" style="margin-left:25px;"><img class="rounded-circle" src="{{request.user.userprofile.profile_pic.url}}" width="40"><textarea class="form-control ml-1 shadow-none textarea"></textarea></div>
-												      <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="button">Post comment <i class="fa fa-paper-plane"></i></button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button></div>
+													  <form method="POST" action="{% url 'announcement_comments' announcement.id class.id %}">
+													  	{% csrf_token %}
+												      <div class="d-flex flex-row align-items-start" style="margin-left:25px;"><img class="rounded-circle" src="{{request.user.userprofile.profile_pic.url}}" width="40"><textarea class="form-control ml-1 shadow-none textarea" name="comment_text" required></textarea></div>
+												      <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="submit">Post comment <i class="fa fa-paper-plane"></i></button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
+												      </div>
+												  	  </form>
 												  </div>
 												</div>
 
@@ -279,7 +290,7 @@
 								</p>
 								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
 								<hr style="border-top: 1px solid #8c8b8b;">
-								
+								<a href="{% url 'student_work' class.id %}">Student Work</a>
 							</div>
 
 						  </div>
@@ -454,7 +465,7 @@
 
 
 
-<script>
+<!-- <script>
 	/* Set the width of the sidebar to 250px (show it) */
 	function openNav() {
 	  document.getElementById("mySidepanel").style.width = "300px";
@@ -464,6 +475,6 @@
 	function closeNav() {
 	  document.getElementById("mySidepanel").style.width = "0";
 	}
-</script>
+</script> -->
 
 {% endblock %}

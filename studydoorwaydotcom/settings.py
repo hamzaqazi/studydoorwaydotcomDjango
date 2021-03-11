@@ -44,8 +44,12 @@ INSTALLED_APPS = [
     'classes.apps.ClassesConfig',
     'crispy_forms',
     'phonenumber_field',
+    'internetforum',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
+CKEDITOR_UPLOAD_PATH = "uploads/"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
@@ -131,12 +135,24 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
+STATIC_ROOT = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static')
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 1060,
+        'extraPlugins': ','.join(
+            [
+                'codesnippet',
+            ]),
+    },
+}
 
 # Email verification 
 

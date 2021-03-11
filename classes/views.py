@@ -6,6 +6,7 @@ from .forms import *
 from django.contrib import messages
 from .models import *
 from accounts.models import *
+from django.views.generic.detail import DetailView
 
 
 @login_required
@@ -66,10 +67,37 @@ def create_class_view(request):
 @login_required
 def announcement_likes_view(request,pk,class_id):
 	announcement = get_object_or_404(Announcement, id=request.POST.get('announcement_id'))
-	announcement.likes.add(request.user)
+	
+	if announcement.likes.filter(id=request.user.id).exists():
+		announcement.likes.remove(request.user)
+	else:	
+		announcement.likes.add(request.user)
 
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
+# class AnnouncementLikesDetailView(DetailView):
+# 	model = Announcement
+# 	template_name = 'classes/class_info.html'
+# 	context_object_name = 'object'
+
+# 	def get_context_data(self, **kwargs):
+# 		data = super().get_context_data(**kwargs)
+
+# 		likes_connected = get_object_or_404(Announcement, id=self.kwargs['pk'])
+# 		liked = False
+
+# 		if likes_connected.likes.filter(id=self.request.user.id).exists():
+# 			liked = True
+# 		data['total_likes'] = likes_connected.total_likes()
+# 		data['ann_is_liked'] = liked
+# 		return data
+
+def announcement_comments_view(request,announcement_id,class_id):
+	announcement = Announcement.objects.get(id=announcement_id)
+	if request.method == 'POST':
+		comment_text = request.POST.get('comment_text')
+		Comment.objects.create(user=request.user,announcement=announcement,comment_text=comment_text)
+	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
 @login_required
 def class_info_view(request,id):
@@ -89,7 +117,7 @@ def class_info_view(request,id):
 	create_class_form = CreateClassRoom(instance=classroom)
 	create_assignment_form = CreateAssignment()
 	create_announcement_form = CreateAnnouncement()
-	announcements = Announcement.objects.filter(class_room=classroom)
+	announcements = Announcement.objects.filter(class_room=classroom).order_by('-announcement_date')
 	if request.method == 'POST':
 		if 'announce' in request.POST:
 			
@@ -135,6 +163,13 @@ def class_info_view(request,id):
 	}
 	return render(request,'classes/class_info.html',context)
 
+
+def student_work_view(request,class_id):
+	# classroom = Classroom.objects.get(class_id=id)
+	context = {
+		'class':get_object_or_404(ClassRoom, pk=class_id),
+	}
+	return render(request,'classes/student_work.html',context)
 @login_required
 def s_class_info_view(request,id):
 	assignments = Assignment.objects.filter(class_room = id)
