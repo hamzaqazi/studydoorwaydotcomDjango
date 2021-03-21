@@ -3,19 +3,59 @@
 {% block title %}All Tags{% endblock %}
 {% block content %}
 {% include 'internet_forum_nav.html' %}
-    <!-- Question List -->
-    <div class="container py-5">
-        <div class="row">
-            {% for tag in tags %}
-            <div class="col-2 mb-2">
-                <div class="card">
-                    <div class="card-body">
-                        <p class="card-text"><a href="/tag/{{tag.name|slugify}}">{{tag.name}} 
-                            <span class="badge badge-info">{{tag.count}}</span></a></p>
+   
+<!-- Search Tag Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 offset-2">
+            <form>
+                <div class="input-group">
+                    <input type="text" name="t" class="form-control form-control-lg" placeholder="Search" />
+                    <div class="input-group-append">
+                    <button class="btn btn-dark btn-lg" type="submit" id="button-addon3">Search</button>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
+            </form>
         </div>
     </div>
+</div>
+
+
+<!-- Question List -->
+<div class="container py-2">
+    <div class="row">
+        {% for tag in tags %}
+        <div class="col-2 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text"><a href="/tag/{{tag.name|slugify}}">{{tag.name}} 
+                        <span class="badge badge-info">{{tag.count}}</span></a></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% if quests.has_other_pages %}
+<!-- Pagination -->
+<nav class="my-3 container">
+    <ul class="pagination">
+        {% if quests.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{quests.previous_page_number}}">Previous</a></li>
+      {% endif %}
+      {% for i in quests.paginator.page_range %}
+      {% if quests.number == i %}
+      <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+      {% else %}
+      <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if quests.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{quests.next_page_number}}">Next</a></li>
+      {% endif %}
+    </ul>
+</nav>
+{% endif %}
 {% endblock %}

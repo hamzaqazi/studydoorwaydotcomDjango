@@ -160,7 +160,7 @@
 								</div>
 								
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructors are in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructor{{instructors.count|pluralize}} are in this course</h6>
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for instructor in instructors %}
@@ -190,7 +190,7 @@
 									<h4>Students</h4>
 								</div>
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} student{{students.count|pluralize}} are enrolled in this course</h6>
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for student in students %}

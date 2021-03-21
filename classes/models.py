@@ -106,10 +106,11 @@ class Submission(models.Model):
 	feedback = models.CharField(max_length=100, blank=True, null=True, default='No feedback yet')
 
 
-# class ClassInfo(models.Model):
-# 	class_room = models.OneToOneField(ClassRoom,null=True,on_delete=models.CASCADE)
-# 	assignments = models.ForeignKey(Assignment,null=True,on_delete=models.SET_NULL)
-	
-# 	def __str__(self):
-# 		return str(self.class_room)
+class Notification(models.Model):
+	title = models.CharField(max_length=255,null=True)
+	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.CASCADE)
+	assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='notifications')
+	notification_date = models.DateField(auto_now_add=True)
+	viewed = models.BooleanField(default=False)
 

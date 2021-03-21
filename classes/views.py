@@ -16,15 +16,15 @@ def create_class_view(request):
 	join_class_form = JoinClassRoom()
 	classes_created = ClassRoom.objects.filter(user=request.user)
 	student = Student.objects.filter(student=request.user)
-	# student = get_object_or_404(Student, pk=request.user.id)
-	# s_class_id = student.class_room.id
-	# classes_joined = ClassRoom.objects.filter(id=s_class_id)
+	notifications = Notification.objects.filter(viewed=False)
+	
 	classes_joined = [] 
 	for student_info in student:
 		classes_joined.append(student_info.class_room)
-		# if settings.DEBUG:
-		# 	print(student_info.class_room)
 
+
+
+		
 	if request.method =='POST':
 		if 'create_classroom' in request.POST:
 			form = CreateClassRoom(request.POST,request.FILES)
@@ -59,6 +59,7 @@ def create_class_view(request):
 		'join_class_form': join_class_form,
 		'classes_created': classes_created,
 		'classes_joined': classes_joined,
+		'notifications': notifications,
 	}
 	
 	return render(request,'classes/create_class.html',context)
@@ -75,22 +76,6 @@ def announcement_likes_view(request,pk,class_id):
 
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
-# class AnnouncementLikesDetailView(DetailView):
-# 	model = Announcement
-# 	template_name = 'classes/class_info.html'
-# 	context_object_name = 'object'
-
-# 	def get_context_data(self, **kwargs):
-# 		data = super().get_context_data(**kwargs)
-
-# 		likes_connected = get_object_or_404(Announcement, id=self.kwargs['pk'])
-# 		liked = False
-
-# 		if likes_connected.likes.filter(id=self.request.user.id).exists():
-# 			liked = True
-# 		data['total_likes'] = likes_connected.total_likes()
-# 		data['ann_is_liked'] = liked
-# 		return data
 
 def announcement_comments_view(request,announcement_id,class_id):
 	announcement = Announcement.objects.get(id=announcement_id)
@@ -214,3 +199,9 @@ def delete_assignment_view(request,class_id,assignment_id):
 		'assignment':assignment,
 	}
 	return render(request,'classes/delete_assignment.html',context)
+
+def delete_notification_view(request,notification_id):
+	notification = Notification.objects.get(id=notification_id)
+	notification.viewed = True
+	notification.save()
+	return redirect('create_class')

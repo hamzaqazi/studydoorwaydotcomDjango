@@ -116,7 +116,16 @@ def tag(request,tag):
 
 # Tags Page
 def tags(request):
-    quests=Question.objects.all()
+    if 't' in request.GET:
+        t=request.GET['t']
+        quests = Question.objects.filter(title__icontains=t).order_by('-id')
+    else:
+        quests=Question.objects.all()
+    paginator = Paginator(quests,10)
+    page_num = request.GET.get('page',1)
+    quests = paginator.page(page_num)
+
+    # quests=Question.objects.all()
     tags=[]
     for quest in quests:
         qtags=[tag.strip() for tag in quest.tags.split(',')]
@@ -131,4 +140,4 @@ def tags(request):
             'count':Question.objects.filter(tags__icontains=tag).count()
         }
         tag_with_count.append(tag_data)
-    return render(request,'internetforum/tags.html',{'tags':tag_with_count})
+    return render(request,'internetforum/tags.html',{'tags':tag_with_count,'quests':quests})

@@ -23,7 +23,7 @@ class Question(models.Model):
 class Answer(models.Model):
     question=models.ForeignKey(Question,on_delete=models.CASCADE)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    detail=models.TextField()
+    detail=RichTextField()
     add_time=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

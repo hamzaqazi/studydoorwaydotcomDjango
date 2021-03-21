@@ -9,6 +9,10 @@ class AnswerForm(ModelForm):
 		fields = ('detail',)
 
 class QuestionForm(ModelForm):
+
 	class Meta:
+		widgets = {
+		'tags':forms.Textarea(attrs={'rows':3}),
+		}
 		model = Question
 		fields = ('title','detail','tags')

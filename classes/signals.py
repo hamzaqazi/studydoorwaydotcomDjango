@@ -12,4 +12,14 @@ def create_instructor(sender, instance, created, **kwargs):
 		print("Instructor created")
 
 
+
+def create_assignment_notification(sender, instance, created, **kwargs):
+	if created:
+		assignment = Assignment.objects.get(id=instance.id)
+		class_room = ClassRoom.objects.get(id=instance.class_room.id)
+		user = User.objects.get(id=instance.user.id)
+		notification = Notification.objects.create(class_room=class_room,assignment=assignment,user=user,title='New Assignment')
+		print("Assignment Notification created")
+
+post_save.connect(create_assignment_notification,sender=Assignment)
 post_save.connect(create_instructor,sender=ClassRoom)
