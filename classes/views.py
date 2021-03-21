@@ -24,7 +24,6 @@ def create_class_view(request):
 
 
 
-		
 	if request.method =='POST':
 		if 'create_classroom' in request.POST:
 			form = CreateClassRoom(request.POST,request.FILES)
@@ -203,5 +202,5 @@ def delete_assignment_view(request,class_id,assignment_id):
 def delete_notification_view(request,notification_id):
 	notification = Notification.objects.get(id=notification_id)
 	notification.viewed = True
-	notification.save()
+	notification.delete()
 	return redirect('create_class')

@@ -114,3 +114,5 @@ class Notification(models.Model):
 	notification_date = models.DateField(auto_now_add=True)
 	viewed = models.BooleanField(default=False)
 
+	def get_unread_notification(self):
+		return self.notification_set.filter(viewed=False)
