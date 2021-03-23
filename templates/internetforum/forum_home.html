@@ -1,21 +1,34 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Internet Forum Home</title>
-</head>
-<body>
-	<h3>Internet Forum Home</h3>
-	
-</body>
-</html> -->
+
 
 {% extends 'main.html'%}
-
+{% load static %}
 
 {% block content %}
 {% include 'internet_forum_nav.html' %}
+<style>
+   #popup {
+    display:none;
+    position:fixed;
+    margin:0 auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  }
+  #close{
+    position:absolute;
+    top:0; 
+    right:0;
+    margin:10px;
+  }
+ 
+</style>
+
+<!-- popup image  -->
+<div id="popup">
+    <img src="{% static 'images/ask_question.png' %}" alt="popup">
+    <i id="close" class="fa fa-window-close fa-2x" aria-hidden="true" style="color:white"></i>
+</div>
 
 <!-- Search Section -->
 <div class="container py-5">
@@ -77,4 +90,22 @@
 </nav>
 {% endif %}
 
+
+<!-- popup image script  -->
+<script>
+
+  //with this first line we're saying: "when the page loads (document is ready) run the following script"
+  $(document).ready(function () {
+
+      //select the POPUP FRAME and show it
+      $("#popup").hide().fadeIn(2000);
+
+      //close the POPUP if the button with id="close" is clicked
+      $("#close").on("click", function (e) {
+          e.preventDefault();
+          $("#popup").fadeOut(1000);
+      });
+
+  });
+</script>
 {% endblock %}
