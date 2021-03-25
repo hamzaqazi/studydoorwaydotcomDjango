@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'internetforum',
     'ckeditor',
     'ckeditor_uploader',
+
+    'quizes',
+    'questions',
+    'results',
 ]
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
@@ -137,7 +141,10 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
 STATIC_ROOT = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
+    BASE_DIR / 'static',
+    BASE_DIR / 'quizes' /'static',
+    # os.path.join(BASE_DIR,'static'),
+
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')

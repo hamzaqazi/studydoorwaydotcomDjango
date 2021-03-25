@@ -32,6 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('classes.urls')),
     path('', include('internetforum.urls')),
+    path('', include('quizes.urls',namespace='quizes')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('',home,name='home'),
     path('accounts/login/', login_view,name='login'),

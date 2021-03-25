@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<style>
+	.not-visible{
+		display: none;
+	}
+</style>
+<div class="container" style="margin-top:80px">
+	<div class="card border-primary mb-2">
+		
+		<div class="card-body">
+			<h5 class="card-title">{{obj.name}}</h5>
+			<div class="card-text">
+				Score to pass : {{obj.required_score_to_pass}} %
+			</div>
+		</div>	
+	</div>
+	<!-- <div class="card-header"><legend>{{obj.name}}</legend></div> -->
+	<form id="quiz-form">
+		
+		{% csrf_token %}
+		<div class="card border-dark">
+			<div class="card-header"><legend>{{obj.name}}</legend></div>
+			<div class="card-body" id="quiz-box"></div>
+			<div class="card-footer">
+		      <small class="text-muted">Created {{obj.created|naturaltime}}</small>
+		    </div>
+		</div>
+		<button type="submit" class="btn btn-primary mt-3">save</button>
+	</form>
+	<div id="score-box"></div>
+	<div id="result-box"></div>
+</div>
+<script src="{% static 'quizes/quiz.js' %}" defer></script>
+{% endblock %}
