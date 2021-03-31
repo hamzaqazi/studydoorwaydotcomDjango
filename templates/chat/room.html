@@ -1,0 +1,141 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Educa{% endblock %}</title>
+  <link href="{% static "css/base.css" %}" rel="stylesheet">
+</head>
+
+<body>
+  <div id="header">
+    <a href="/" class="logo">Studydoorwaydom </a>
+    {# <h2>{{course.class_name}}</h2> #}
+    {# <h2>Created by {{course.user.first_name}}</h2> #}
+    <ul class="menu">
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url "logout" %}">Sign out</a></li>
+      {% else %}
+        <li><a href="{% url "login" %}">Sign in</a></li>
+      {% endif %}
+    </ul>
+  </div>
+  <div id="content">
+	
+  </div>
+	<div id="chat">
+		
+  	</div>
+        <div id="chat-input" style="display:inline">
+			<input class="rouded";id="chat-message-input" type="text" placeholder="Type your message here" style="width:70%;position:left;float:left;display:inline;margin-left:2%;margin-right:2%; padding: 20px;border-radius: 20px;">	
+			<input id="chat-message-submit" type="submit" value="Send" style="width:20%;height:60px;margin-bottom: 40px;">
+		</div>
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function() {
+    	var url = 'ws://' + window.location.host +'/ws/chat/room/' + '{{ course.id }}/';
+		var chatSocket = new WebSocket(url);
+
+
+		chatSocket.onmessage = function(e) {
+			var data = JSON.parse(e.data);
+			var message = data.message;
+			var dateOptions = {hour: 'numeric', minute: 'numeric', hour12: true};
+			var datetime = new Date(data['datetime']).toLocaleString('en',dateOptions);
+			var isMe = data.user === '{{ request.user }}';
+			var source = isMe ? 'me' : 'other';
+			var name = isMe ? 'Me' : data.user;
+			var $chat = $('#chat');
+			$chat.append('<div class="message ' + source + '">' +'<strong>' + name + '</strong> ' +
+				'<span class="date">' + datetime + '</span><br>' + message +'</div>');
+			$chat.scrollTop($chat[0].scrollHeight);
+		};
+	    chatSocket.onclose = function(e) {
+			console.error('Chat socket closed unexpectedly');
+	    };
+	    chatSocket.onopen = function(e){
+        	console.log('websocket is open now')
+
+        	$.ajax({
+        		type:'GET',
+        		url : "http://127.0.0.1:8000/ajaxusers/",
+        		dataType: "json",
+        		success:function(response){
+        		    console.log(response)	
+        		    console.log('ajax run success fully')
+        		    var $chat = $('#chat');
+
+        		    for(var key in response)
+        		    {   
+                       
+						var isMe = response[key].author === '{{ request.user }}';
+						var source = isMe ? 'me' : 'other';
+						var name = isMe ? 'Me' : response[key].author;
+
+        		    	$chat.append('<div class="message ' + source + '">'+'<strong>' + response[key].author + '</strong> ' +
+				       '<span class="date">' + response[key].timestamp + '</span><br>' + response[key].content +'</div>');
+			           
+        		    }
+        		},
+        		error:function(response){
+        			alert("No Data Found")
+        		
+        		},
+        		});
+        		
+
+        };
+        		
+
+
+       var $input = $('#chat-message-input');
+	   var $submit = $('#chat-message-submit');
+	   $submit.click(function() {
+		var message = $input.val();
+		if(message) {
+			// send message in JSON format
+			chatSocket.send(JSON.stringify({'message': message}));
+			// clear input
+			$input.val('');
+			// return focus
+			$input.focus();
+		}
+	});
+ 
+	$input.focus();
+	$input.keyup(function(e) {
+	if (e.which === 13) {
+		// submit with enter / return key
+		$submit.click();
+	}
+	});
+
+
+
+
+});
+  </script>	
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

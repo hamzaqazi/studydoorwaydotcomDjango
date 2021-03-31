@@ -17,9 +17,10 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
-
-
+from rest_framework import routers
 from .views import home 
+from chat.views import getMessages
+from rest_framework import routers
 from accounts.views import (
 	login_view,
 	register_view,
@@ -27,6 +28,9 @@ from accounts.views import (
 	userprofile_view,
     register_as_teacher_view,
 )
+router=routers.DefaultRouter()
+router.register(r'ajaxusers',getMessages)
+print(router)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,6 +41,8 @@ urlpatterns = [
     path('accounts/logout/', logout_view,name='logout'),
     path('accounts/userprofile/<int:profile_id>', userprofile_view,name='userprofile'),
     path('accounts/register_as_teacher/<int:prof_id>', register_as_teacher_view,name='register_as_teacher'),
+    path('chat/', include('chat.urls', namespace='chat')),
+    
 ]
-
+urlpatterns+=router.urls
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

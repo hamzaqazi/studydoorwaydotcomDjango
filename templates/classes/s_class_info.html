@@ -45,6 +45,7 @@
 						    			{% endfor %}
 						    			{% else %}
 						    			<p>No assignments found</p>
+
 						    			{% endif %}
 						    		</div>
 						    		<div class="col rounded" id="cardshadow" style="margin-left:20px">
@@ -188,5 +189,29 @@
             </div>
         </div>
     </div>
+
+
+<br>
+
+
+<style>
+
+.vertical-center {
+  margin top :10px;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+</style>
+
+
+<div class="container">
+  <div class="vertical-center">
+  	<br>
+  	<br>
+    <a href="{% url 'chat:course_chat_room' class_id %}" }> Student Chat </a>
+  </div>
+</div>
 
 {% endblock %}

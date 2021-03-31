@@ -32,17 +32,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'accounts.apps.AccountsConfig',
     'classes.apps.ClassesConfig',
     'crispy_forms',
     'phonenumber_field',
+    'chat',
+    'rest_framework',
+    
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -58,6 +61,18 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'studydoorwaydotcom.urls'
+ASGI_APPLICATION = 'studydoorwaydotcom.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [('127.0.0.1', 6379)],
+            },
+    },
+}
+
+
+
 
 TEMPLATES = [
     {
@@ -88,7 +103,7 @@ DATABASES = {
     }
 }
 
-
+# AUTH_USER_MODEL = "chat.User" 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

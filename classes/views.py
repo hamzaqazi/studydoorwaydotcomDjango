@@ -113,7 +113,11 @@ def class_info_view(request,id):
 
 
 def s_class_info_view(request,id):
-	return render(request, 'classes/s_class_info.html')
+	class_id = id
+	context = {
+		'class_id':class_id,
+	}
+	return render(request, 'classes/s_class_info.html',context)
 
 @login_required
 def update_assignment_view(request,class_id,assignment_id):
