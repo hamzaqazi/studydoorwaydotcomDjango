@@ -8,16 +8,17 @@ from django.db.models import Count
 
 # Internet Forum Homepage
 def forum_homepage(request):
+    
 	if 'q' in request.GET:
 		q=request.GET['q']
 		quests = Question.objects.annotate(total_comments=Count('answer__comment')).filter(title__icontains=q).order_by('-id')
 	else:
 		quests = Question.objects.annotate(total_comments=Count('answer__comment')).all().order_by('-id')
-	paginator = Paginator(quests,2)
+	paginator = Paginator(quests,4)
 	page_num = request.GET.get('page',1)
 	quests = paginator.page(page_num)
 
-	return render(request,'internetforum/forum_home.html',{'quests':quests})
+	return render(request,'internetforum/forum_home.html',{'quests':quests,'tags':tags})
 
 
 # Detail
@@ -102,6 +103,7 @@ def ask_form(request):
             questForm.user=request.user
             questForm.save()
             messages.success(request,'Question has been added.')
+            return redirect('ask-question')
     return render(request,'internetforum/ask-question.html',{'form':form})
 
 
@@ -119,6 +121,8 @@ def tags(request):
     if 't' in request.GET:
         t=request.GET['t']
         quests = Question.objects.filter(title__icontains=t).order_by('-id')
+        if not quests:
+            messages.warning(request,'Tag not found!')
     else:
         quests=Question.objects.all()
     paginator = Paginator(quests,10)
@@ -141,3 +145,23 @@ def tags(request):
         }
         tag_with_count.append(tag_data)
     return render(request,'internetforum/tags.html',{'tags':tag_with_count,'quests':quests})
+
+# Profile
+def user_dashboard(request):
+    quests=Question.objects.filter(user=request.user).order_by('-id')
+    answers=Answer.objects.filter(user=request.user).order_by('-id')
+    comments=Comment.objects.filter(user=request.user).order_by('-id')
+    upvotes=UpVote.objects.filter(user=request.user).order_by('-id')
+    downvotes=DownVote.objects.filter(user=request.user).order_by('-id')
+    
+    label = ['Questions', 'Upvotes', 'Downvotes','Answers','Comments']
+    data = [quests.count(), upvotes.count(), downvotes.count(),answers.count(), comments.count()]
+    return render(request,'internetforum/user-dashboard.html',{
+        'quests':quests,
+        'answers':answers,
+        'comments':comments,
+        'upvotes':upvotes,
+        'downvotes':downvotes,
+        'label':label,
+        'data':data,
+    })

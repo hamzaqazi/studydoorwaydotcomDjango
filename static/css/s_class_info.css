@@ -33,3 +33,20 @@
   color:#7a9ef0;
   text-decoration: underline #7a9ef0;
 }
+
+
+
+.time-until{
+  background-color:crimson;
+  font-size:14px;
+  color:white;
+  padding:3px;
+  text-align:center;
+}
+#time-left {
+  border:1px solid crimson;
+  color:crimson;
+  background-color:white;
+  padding:3px;
+  font-style: italic;
+}

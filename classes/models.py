@@ -86,7 +86,7 @@ class Assignment(models.Model):
 	instruction = models.TextField(max_length=500,null=True,blank=True)
 	file = models.FileField(blank=True,upload_to='files/t_assignments/')
 	points = models.CharField(max_length=100, null=True, choices=POINTS, default=100)
-	due_date = models.DateField()
+	due_date = models.DateTimeField()
 	assigning_date = models.DateField(auto_now_add=True)
 	last_updated = models.DateTimeField(auto_now=True)
 	user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='assignments')

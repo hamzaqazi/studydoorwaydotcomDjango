@@ -7,7 +7,7 @@ from django.contrib import messages
 from .models import *
 from accounts.models import *
 from django.views.generic.detail import DetailView
-
+from quizes.models import Quiz
 
 @login_required
 def create_class_view(request):
@@ -96,11 +96,14 @@ def class_info_view(request,id):
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
+	quizes = Quiz.objects.all()
 
 
 	create_class_form = CreateClassRoom(instance=classroom)
 	create_assignment_form = CreateAssignment()
 	create_announcement_form = CreateAnnouncement()
+	create_quiz_form = CreateQuiz()
+
 	announcements = Announcement.objects.filter(class_room=classroom).order_by('-announcement_date')
 	if request.method == 'POST':
 		if 'announce' in request.POST:
@@ -134,16 +137,25 @@ def class_info_view(request,id):
 				messages.success(request,'Assignment created successfully')
 				create_assignment_form = CreateAssignment()
 				return redirect('class_info',id=id)
+		if 'create_quiz' in request.POST:
+			create_quiz_form = CreateQuiz(request.POST)
+			if create_quiz_form.is_valid():
+				create_quiz_form.save()
+				messages.success(request,'Assignment Quiz created successfully')
+				return redirect('class_info',id=id)
+
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=id),
 		'assignments':assignments,
 		'create_class_form':create_class_form,
 		'create_assignment_form':create_assignment_form,
+		'create_quiz_form':create_quiz_form,
 		'students':students,
 		'instructors':instructors,
 		'classes_created':classes_created,
 		'classes_joined':classes_joined,
 		'announcements':announcements,
+		'quizes':quizes,
 	}
 	return render(request,'classes/class_info.html',context)
 

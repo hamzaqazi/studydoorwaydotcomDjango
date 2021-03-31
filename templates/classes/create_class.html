@@ -90,13 +90,37 @@
   .list-group {
   	font-size: 13px;
   }
-	  
+	
+/*.header {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  background-color: #f1f1f1;
+}
+
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #ccc;
+}
+
+
+.progress-bar {
+  height: 8px;
+  background: #F06529;
+  width: 0%;
+}*/  
 
 </style>
 
+<!-- <div class="header" style="margin-top:70px">
+  <div class="progress-container">
+    <div class="progress-bar" id="myBar"></div>
+  </div>
+</div> -->
 
-
-<div class="row justify-content-center" style="margin-top:70px">
+<div class="row justify-content-center" style="margin-top:90px" >
 	<button style="margin-right:5px;" class="btn btn-outline-info" data-toggle="modal" data-target="#myModalCreate" ><i class="fa fa-plus-circle"></i> Create Class</button>
 	<button class="btn btn-outline-info" data-toggle="modal" data-target="#myModalJoin" ><i class="fa fa-handshake-o"></i> Join Class</button>
 </div>
@@ -277,4 +301,14 @@
 		{% endfor %}
 	</div>
 </div>
+<!-- <script type="text/javascript">
+	window.onscroll = function() {myFunction()};
+
+	function myFunction() {
+	  var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+	  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+	  var scrolled = (winScroll / height) * 100;
+	  document.getElementById("myBar").style.width = scrolled + "%";
+	}
+</script> -->
 {% endblock %}

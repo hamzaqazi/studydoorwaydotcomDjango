@@ -175,7 +175,7 @@
   z-index:1;
   font-size: 20px;
   cursor: pointer;
-  background-color: #ffa31a;
+  background-color: #F06529;
   color: white;
   padding: 8px 15px;
   border: none;
@@ -378,3 +378,15 @@ input:focus ~ .highlight {
     cursor: pointer
 }
 
+.bg pt-3{
+  /* The image used */
+  background-image: url("/static/images/no students.png");
+
+  /* Full height */
+  height: 100%; 
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

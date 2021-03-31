@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from .models import *
+from quizes.models import Quiz
 
 class DateInput(forms.DateInput):
 	input_type = 'date'
@@ -51,3 +52,10 @@ class CreateAnnouncement(ModelForm):
 		# 	'announcement_text':forms.Textarea(attrs={'rows':3,'cols':15})
 		# }
 		fields = '__all__'
+
+
+class CreateQuiz(ModelForm):
+	class Meta:
+		model = Quiz
+		fields = '__all__'
+		

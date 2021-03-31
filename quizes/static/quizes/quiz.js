@@ -40,7 +40,9 @@ $.ajax({
 const quizForm = document.getElementById('quiz-form')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
 
-
+const playAudio = () =>{
+	document.getElementById('audio-alert').play();
+}
 const sendData = () => {
 	const elements = [...document.getElementsByClassName('ans')]	
 	const data = {}
@@ -74,7 +76,7 @@ const sendData = () => {
 					// console.log(resp)
 					// console.log('*****')
 					resDiv.innerHTML += question
-					const cls = ['container', 'p-3', 'text-light', 'h6']
+					const cls = ['container', 'p-3', 'text-light', 'h6','rounded',]
 					resDiv.classList.add(...cls)
 
 					if (resp=='not answered'){
@@ -95,6 +97,7 @@ const sendData = () => {
 						}
 					}
 				}
+				// const body = document.getElementsByTagName('DIV')[4]
 				resultBox.append(resDiv)
 			})
 		},
@@ -106,6 +109,6 @@ const sendData = () => {
 
 quizForm.addEventListener('submit', e=>{
 	e.preventDefault()
-
 	sendData()
+	playAudio()
 })
