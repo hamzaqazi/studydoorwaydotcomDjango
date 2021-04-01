@@ -168,11 +168,6 @@ def student_work_view(request,class_id):
 	return render(request,'classes/student_work.html',context)
 @login_required
 def s_class_info_view(request,id):
-<<<<<<< HEAD
-	class_id = id
-	context = {
-		'class_id':class_id,
-=======
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room= id)
 	instructors = Instructor.objects.filter(class_room= id)
@@ -182,7 +177,7 @@ def s_class_info_view(request,id):
 		'assignments':assignments,
 		'instructors':instructors,
 		'students':students,
->>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
+
 	}
 	return render(request, 'classes/s_class_info.html',context)
 

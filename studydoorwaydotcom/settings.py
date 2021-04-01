@@ -39,20 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
-=======
+
     'django.contrib.humanize',
 
->>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
+
     'accounts.apps.AccountsConfig',
     'classes.apps.ClassesConfig',
     'crispy_forms',
     'phonenumber_field',
-<<<<<<< HEAD
+
     'chat',
     'rest_framework',
     
-=======
+
     'internetforum',
     'ckeditor',
     'ckeditor_uploader',
@@ -60,7 +59,7 @@ INSTALLED_APPS = [
     'quizes',
     'questions',
     'results',
->>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
+
 ]
 
 CKEDITOR_UPLOAD_PATH = "uploads/"

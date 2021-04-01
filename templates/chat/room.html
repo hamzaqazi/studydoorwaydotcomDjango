@@ -1,6 +1,10 @@
+{% extends 'main.html' %}
+
 
 {% load static %}
-<!DOCTYPE html>
+<link href="{% static "css/base.css" %}" rel="stylesheet">
+{% block content%}
+{# <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -8,7 +12,8 @@
   <link href="{% static "css/base.css" %}" rel="stylesheet">
 </head>
 
-<body>
+<body> #}
+
   <div id="header">
     <a href="/" class="logo">Studydoorwaydom </a>
     {# <h2>{{course.class_name}}</h2> #}
@@ -27,9 +32,9 @@
 	<div id="chat">
 		
   	</div>
-        <div id="chat-input" style="display:inline">
-			<input class="rouded";id="chat-message-input" type="text" placeholder="Type your message here" style="width:70%;position:left;float:left;display:inline;margin-left:2%;margin-right:2%; padding: 20px;border-radius: 20px;">	
-			<input id="chat-message-submit" type="submit" value="Send" style="width:20%;height:60px;margin-bottom: 40px;">
+        <div id="chat-input">
+			<input class="mb-5 "id="chat-message-input" style="width:80%;height:30px;">
+			<input id="chat-message-submit" type="submit" value="Send">
 		</div>
 <script
   src="https://code.jquery.com/jquery-3.5.1.js"
@@ -89,39 +94,36 @@
         		
 
         };
-        		
 
+       	var $input = $('#chat-message-input');
+	   	var $submit = $('#chat-message-submit');
+	   	$submit.click(function() {
+	   		console.log("clicked")
+			var message = $input.val();
+			if(message) {
+				// send message in JSON format
+				chatSocket.send(JSON.stringify({'message': message}));
+				// clear input
+				$input.val('');
+				// return focus
+				$input.focus();
+			}
+		});
 
-       var $input = $('#chat-message-input');
-	   var $submit = $('#chat-message-submit');
-	   $submit.click(function() {
-		var message = $input.val();
-		if(message) {
-			// send message in JSON format
-			chatSocket.send(JSON.stringify({'message': message}));
-			// clear input
-			$input.val('');
-			// return focus
-			$input.focus();
-		}
-	});
  
-	$input.focus();
-	$input.keyup(function(e) {
-	if (e.which === 13) {
-		// submit with enter / return key
-		$submit.click();
-	}
-	});
-
-
-
+		$input.focus();
+		$input.keyup(function(e) {
+			if (e.which === 13) {
+				// submit with enter / return key
+				$submit.click();
+			}
+		});
 
 });
   </script>	
-</body>
-</html>
-
+{# </body>
+</html> #}
+{% endblock %}
 
 
 

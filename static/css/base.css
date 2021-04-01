@@ -295,9 +295,10 @@ ul#course-modules li:hover {
     background:#efefef;
     width:100%;
     padding-top:20px;
+    padding-bottom:20px; 
 }
 
-/*#chat-input input {
+#chat-input input {
     width:96%;
     position:left;
     float:left;
@@ -306,4 +307,4 @@ ul#course-modules li:hover {
     margin-right:2%;
     padding-left:0;
     padding-right:0;
-}*/
+}

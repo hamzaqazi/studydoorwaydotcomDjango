@@ -3,9 +3,6 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 
-   
-
-
 class Message(models.Model):
 	author = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)
 	content=models.CharField(max_length=100)
