@@ -1,10 +1,13 @@
 from django.shortcuts import render,redirect,get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from django.contrib import messages
 from .models import *
 from accounts.models import *
-
+from django.views.generic.detail import DetailView
+from quizes.models import Quiz
 
 @login_required
 def create_class_view(request):
@@ -13,14 +16,13 @@ def create_class_view(request):
 	join_class_form = JoinClassRoom()
 	classes_created = ClassRoom.objects.filter(user=request.user)
 	student = Student.objects.filter(student=request.user)
-	# student = get_object_or_404(Student, pk=request.user.id)
-	# s_class_id = student.class_room.id
-	# classes_joined = ClassRoom.objects.filter(id=s_class_id)
+	notifications = Notification.objects.filter(viewed=False)
+	
 	classes_joined = [] 
 	for student_info in student:
 		classes_joined.append(student_info.class_room)
-		# if settings.DEBUG:
-		# 	print(student_info.class_room)
+
+
 
 	if request.method =='POST':
 		if 'create_classroom' in request.POST:
@@ -56,10 +58,30 @@ def create_class_view(request):
 		'join_class_form': join_class_form,
 		'classes_created': classes_created,
 		'classes_joined': classes_joined,
+		'notifications': notifications,
 	}
 	
 	return render(request,'classes/create_class.html',context)
 
+
+@login_required
+def announcement_likes_view(request,pk,class_id):
+	announcement = get_object_or_404(Announcement, id=request.POST.get('announcement_id'))
+	
+	if announcement.likes.filter(id=request.user.id).exists():
+		announcement.likes.remove(request.user)
+	else:	
+		announcement.likes.add(request.user)
+
+	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
+
+
+def announcement_comments_view(request,announcement_id,class_id):
+	announcement = Announcement.objects.get(id=announcement_id)
+	if request.method == 'POST':
+		comment_text = request.POST.get('comment_text')
+		Comment.objects.create(user=request.user,announcement=announcement,comment_text=comment_text)
+	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
 @login_required
 def class_info_view(request,id):
@@ -70,16 +92,32 @@ def class_info_view(request,id):
 	for student_info in student_classes:
 		classes_joined.append(student_info.class_room)
 
-
 	classroom = ClassRoom.objects.get(id=id)
-	# if Student.objects.filter(student=student, class_room=classroom).exists():
-	# 	return render(request, 'classes/s_class_info.html')
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
+	quizes = Quiz.objects.all()
+
+
 	create_class_form = CreateClassRoom(instance=classroom)
 	create_assignment_form = CreateAssignment()
+	create_announcement_form = CreateAnnouncement()
+	create_quiz_form = CreateQuiz()
+
+	announcements = Announcement.objects.filter(class_room=classroom).order_by('-announcement_date')
 	if request.method == 'POST':
+		if 'announce' in request.POST:
+			
+			announcement_text = request.POST.get('announcement_text')
+			announcement_file = request.FILES.get('announcement_file',None)
+			if not announcement_file:
+				Announcement.objects.create(announcement_text=announcement_text,user=request.user,class_room=classroom)
+			else:
+				# announcement_file = request.FILES['announcement_file']
+				Announcement.objects.create(announcement_text=announcement_text,announcement_file=announcement_file,user=request.user,class_room=classroom)
+			
+			return redirect('class_info',id=id)
+			
 		if 'edit_class' in request.POST:
 			create_class_form = EditClassRoom(request.POST, request.FILES, instance=classroom)
 			if create_class_form.is_valid():
@@ -99,23 +137,52 @@ def class_info_view(request,id):
 				messages.success(request,'Assignment created successfully')
 				create_assignment_form = CreateAssignment()
 				return redirect('class_info',id=id)
+		if 'create_quiz' in request.POST:
+			create_quiz_form = CreateQuiz(request.POST)
+			if create_quiz_form.is_valid():
+				create_quiz_form.save()
+				messages.success(request,'Assignment Quiz created successfully')
+				return redirect('class_info',id=id)
+
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=id),
 		'assignments':assignments,
 		'create_class_form':create_class_form,
 		'create_assignment_form':create_assignment_form,
+		'create_quiz_form':create_quiz_form,
 		'students':students,
 		'instructors':instructors,
 		'classes_created':classes_created,
 		'classes_joined':classes_joined,
+		'announcements':announcements,
+		'quizes':quizes,
 	}
 	return render(request,'classes/class_info.html',context)
 
 
+def student_work_view(request,class_id):
+	# classroom = Classroom.objects.get(class_id=id)
+	context = {
+		'class':get_object_or_404(ClassRoom, pk=class_id),
+	}
+	return render(request,'classes/student_work.html',context)
+@login_required
 def s_class_info_view(request,id):
+<<<<<<< HEAD
 	class_id = id
 	context = {
 		'class_id':class_id,
+=======
+	assignments = Assignment.objects.filter(class_room = id)
+	students = Student.objects.filter(class_room= id)
+	instructors = Instructor.objects.filter(class_room= id)
+
+	context = {
+		'class':get_object_or_404(ClassRoom, pk=id),
+		'assignments':assignments,
+		'instructors':instructors,
+		'students':students,
+>>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
 	}
 	return render(request, 'classes/s_class_info.html',context)
 
@@ -149,3 +216,9 @@ def delete_assignment_view(request,class_id,assignment_id):
 		'assignment':assignment,
 	}
 	return render(request,'classes/delete_assignment.html',context)
+
+def delete_notification_view(request,notification_id):
+	notification = Notification.objects.get(id=notification_id)
+	notification.viewed = True
+	notification.delete()
+	return redirect('create_class')

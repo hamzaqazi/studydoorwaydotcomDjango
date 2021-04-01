@@ -25,6 +25,28 @@ class ClassRoom(models.Model):
 		return self.class_name
 
 
+class Announcement(models.Model):
+	user = models.ForeignKey(User,null=False,on_delete=models.CASCADE)
+	announcement_text = models.TextField(max_length=500)
+	announcement_file = models.FileField(blank=True,upload_to='files/announcement_file/')
+	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
+	announcement_date = models.DateTimeField(auto_now_add=True)
+	likes = models.ManyToManyField(User, related_name = 'announcement_likes')
+
+	def total_likes(self):
+		return self.likes.count()
+
+	def __str__(self):
+		return self.announcement_text
+
+class Comment(models.Model):
+	announcement = models.ForeignKey(Announcement,related_name = 'comments',on_delete=models.CASCADE)
+	user = models.ForeignKey(User,on_delete=models.CASCADE)
+	comment_text = models.TextField(max_length=255)
+	comment_date = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.comment_text 
 
 class Student(models.Model):
 	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.SET_NULL)
@@ -62,9 +84,9 @@ class Assignment(models.Model):
 	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	title = models.CharField(max_length=100)
 	instruction = models.TextField(max_length=500,null=True,blank=True)
-	file = models.FileField(null=True,blank=True,upload_to='files/t_assignments/')
+	file = models.FileField(blank=True,upload_to='files/t_assignments/')
 	points = models.CharField(max_length=100, null=True, choices=POINTS, default=100)
-	due_date = models.DateField()
+	due_date = models.DateTimeField()
 	assigning_date = models.DateField(auto_now_add=True)
 	last_updated = models.DateTimeField(auto_now=True)
 	user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='assignments')
@@ -84,10 +106,13 @@ class Submission(models.Model):
 	feedback = models.CharField(max_length=100, blank=True, null=True, default='No feedback yet')
 
 
-# class ClassInfo(models.Model):
-# 	class_room = models.OneToOneField(ClassRoom,null=True,on_delete=models.CASCADE)
-# 	assignments = models.ForeignKey(Assignment,null=True,on_delete=models.SET_NULL)
-	
-# 	def __str__(self):
-# 		return str(self.class_room)
+class Notification(models.Model):
+	title = models.CharField(max_length=255,null=True)
+	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.CASCADE)
+	assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='notifications')
+	notification_date = models.DateField(auto_now_add=True)
+	viewed = models.BooleanField(default=False)
 
+	def get_unread_notification(self):
+		return self.notification_set.filter(viewed=False)

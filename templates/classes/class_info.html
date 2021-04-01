@@ -1,167 +1,17 @@
 {% extends 'main.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 {% block content %}
 
-<style>
-	/*body{
-		background-color: #e2e8f0;
-	}*/
-	.nav-tabs .nav-link.active {
-    	font-weight:bold;
-    	background-color: transparent;
-    	border-bottom:3px solid #dd0000;
-    	border-right: none;
-    	border-left: none;
-    	border-top: none;
-	}
-	.dropdown-item:hover{
-		color:#fff;
-		background-color:#00b3b3
-	}
-	.md-avatar {
-	  vertical-align: middle;
-	  width: 50px;
-	  height: 50px;
-	}
-	.md-avatar.size-1 {
-	  width: 40px;
-	  height: 40px;
-	}
-	.md-avatar.size-2 {
-	  width: 70px;
-	  height: 70px;
-	}
-	.md-avatar.size-3 {
-	  width: 90px;
-	  height: 90px;
-	}
-	.md-avatar.size-4 {
-	  width: 110px;
-	  height: 110px;
-	}
 
 
-	/* The sidepanel menu */
-.sidepanel {
-  height: auto; /* Specify a height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: absolute; /* Stay in place */
-  z-index: 2; /* Stay on top */
-  top: 45px;
-  left: 0;
-  background-color: #FF9F33; /* Orange*/
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
-}
-
-
-/* The sidepanel links */
-.sidepanel a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 18px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-}
-.sidepanel .panel-collapse a{
-	font-size: 15px;
-}
-
-/* When you mouse over the navigation links, change their color */
-.sidepanel a:hover {
-  color: #ffa31a;
-}
-
-/* Position and style the close button (top right corner) */
-.sidepanel .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
-}
-
-/* Style the button that is used to open the sidepanel */
-.openbtn {
-  position:absolute;
-  z-index:1;
-  font-size: 20px;
-  cursor: pointer;
-  background-color: #ffa31a;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-}
-
-.openbtn:hover {
-  background-color: #444;
-}
-.sidepanel hr{
-	background-color: #ffa31a;
-	opacity:0.5;
-}
-
-#editClassLink{
-	font-size: 14px;
-	left:25px;
-}
-#deleteClassLink{
-	font-size: 14px;
-	left:25px;
-}
-#deleteClassLink:hover{
-	color:red;
-}
-</style>
-<link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
-
-
-
-		
+<link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">	
 	
-<section class=" " style="margin-top:70px">
-	<!-- <div class="row">
-		<div class="col-md-2">
-			class name
-		</div>
-	</div> -->
+<section class=" " style="margin-top:75px">
 	
-	<div id="mySidepanel" class="sidepanel">
-	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-	  <div class="list-group">
-		  <a href="#collapse2" data-toggle="collapse" class="list-group-item list-group-item-action fa fa-book">  Classes
-		  </a>
-		  <div id="collapse2" class="panel-collapse collapse">
-	      	<a href="{% url 'create_class' %}" class="list-group-item list-group-item-info">
-	      	 Joined Classes
-	      	 <span class="badge badge-pill badge-info float-right">{{classes_joined|length}}</span> 
-	      	</a>
-	      	<a href="#" class="list-group-item list-group-item-info">
-	      	 Created Classes
-	      	 <span class="badge badge-pill badge-info float-right">{{classes_created.count}}</span> 
-	      	</a>
-
-	      </div>
-
-		  <a href="#collapse1" data-toggle="collapse" class="list-group-item " > <i class="fa fa-plus"></i>  Create Class Work
-		  	<span class="float-right"><i class="fas fa-chevron-circle-down"></i></span>
-		  </a>
-		  <div id="collapse1" class="panel-collapse collapse">
-	      	<a href="#" class="list-group-item list-group-item-secondary fas fa-file-alt"> Assignment</a>
-	      	<a href="#" class="list-group-item list-group-item-secondary far fa-file-alt"> Assignment Quiz </a>
-	      	<a href="#" class="list-group-item list-group-item-secondary fas fa-question"> Question</a>  
-	      </div>
-		  <a href="#" class="list-group-item list-group-item-action" id="editClassLink" data-toggle="modal" data-target="#editClassModal"><i class="fas fa-edit sm"></i>Edit Class</a>
-		  <a href="#" class="list-group-item list-group-item-action" id="deleteClassLink"><i class="fas fa-trash"></i>Delete Class</a>
-		  
-	  </div>
-	</div>
-
-	<button class="openbtn" onclick="openNav()">&#9776;</button>
+	{% include 'side_panel.html' %}
 
 
     <div class="container">
@@ -172,7 +22,7 @@
                     <a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Stream</a>
                     <a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Class Work</a>
                     <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">People</a>
-                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a>
+                    <a class="nav-item nav-link" id="pop4-tab" data-toggle="tab" href="#pop4" role="tab" aria-controls="pop4" aria-selected="false">Grades</a>
                     
                   </div>
                 </nav>
@@ -191,6 +41,9 @@
 					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated}}</p>
 					                        <hr style="border-top: 1px solid #F06529;">
 					                        <p class="">This class has been created by <b>{{class.user.first_name}}</b> on <strong>{{class.date_created}}</strong></p>
+					                        <span>
+					                        	Student Key : <a href="">{{class.student_key}}</a>
+					                        </span>
 					                        
 					                       <!--  <div class="icon-block"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"> <i class="fa fa-twitter"></i></a><a href="#"> <i class="fa fa-google-plus"></i></a></div> -->
 					                    </div>
@@ -198,18 +51,144 @@
 					    		</div>						    		
 					    	</div>
 					    	<div class="container">
-		                      	<div class="row" style="margin-top:20px">
-						    		<div class="col-md-2 rounded" id="cardshadow" >
+		                      	<div class="row">
+						    		<div class="col-sm-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;overflow: auto;height:200px;">
 						    			{% if assignments %}
-						    			{% for assignment in assignments%}
-						    			<h5>{{assignment.title}}</h5>
+						    			{% for assignment in assignments %}
+						    			<a href="">{{assignment.title}}</a>
 						    			{% endfor %}
 						    			{% else %}
-						    			<p>No assignments found</p>
+						    			<p>You didn't assign any work yet</p>
 						    			{% endif %}
 						    		</div>
-						    		<div class="col rounded" id="cardshadow" style="margin-left:20px">
-						    			<h4>card</h4>
+						    		<div class="col rounded" style="margin-top:20px">
+						    			<div class="row rounded" id="cardshadow" >
+						    				<div class="col rounded">
+						    					<div class="chip">
+												  <img src="{{request.user.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+												  <b data-toggle="collapse" data-target="#collapseAnnounce" aria-expanded="false"aria-controls="collapseAnnounce">Announce something to your class</b>
+												</div>
+
+							    				<div id="collapseAnnounce" class="collapse">
+													<!-- {{create_announcement_form|crispy}} -->
+													
+													<form method="POST",action="", enctype="multipart/form-data" novalidate>
+														{% csrf_token %}
+													<div class="group"> 
+														<input type="text" name="announcement_text" required>
+													      <span class="highlight"></span>
+													      <span class="bar"></span>
+													      <label>Announce something to your class</label>
+												    </div>
+
+ 	             <!-- adding attachments to announcement dropdown button -->
+
+												    <div class="dropdown" style="margin-bottom:10px;margin-left:50px">
+													  <button class="btn btn-outline-primary " type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-paperclip"></i>
+													      Add
+													  </button>
+													  <div class="dropdown-menu" aria-labelledby="dropDownMenuButton">
+													    <a class="dropdown-item" href=""><i class="fas fa-link"></i> Link</a>
+													    <a class="dropdown-item" ><input type="file" name="announcement_file" /><i class="far fa-file-alt"></i> File</a>
+													    <a class="dropdown-item" href="#"><i class="fa fa-youtube-play"></i> Youtube</a>
+													  </div>
+													  <button style="float:right;" type="submit" class="btn btn-outline-success" name="announce">Post <i class="fa fa-paper-plane"></i></button>
+													</div>
+													</form>
+
+												</div>
+											</div>
+						    			</div>
+						    			{% if announcements %}
+						    			{% for announcement in announcements %}
+						    			<div class="row rounded" style="margin-top:20px" id="cardshadow">
+						    				<div class="col rounded">
+						    					<h4>
+						    					<span class="mt-4"style="float:right;">
+										    		<div class="dropleft">
+												    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+												    	</i>
+											    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
+														    <a class="dropdown-item" data-toggle="modal" data-target="#updateAnnModal" href=""><i class="far fa-edit"></i> Update</a>
+														    <a class="dropdown-item" data-toggle="modal" data-target="#deleteAnnModal" href=""><i class="far fa-trash-alt"></i>  Delete</a>
+														</div>
+												    </div>
+											    </span>
+												</h4>
+						    					<div class="d-flex flex-column comment-section" id="myGroup">
+												  <div class="bg-white p-2">
+												      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40">
+												          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{announcement.user.first_name}}</span><span class="date text-black-50">Shared publicly - {{announcement.announcement_date|timesince}} ago</span></div>
+												      </div>
+												      <div class="mt-2">
+												          <p class="comment-text">{{announcement.announcement_text}}</p>
+												      </div>
+												      {% if announcement.announcement_file %}
+
+												      <div class="mt-2 rounded" style="width:25%;overflow:hidden" id="cardshadow">
+												      	<div class="col">
+												      		<a href="{{ announcement.announcement_file.url }}" download>
+																<img  src="{% static 'images/files_image.png' %}" widht="40" height="40" alt="Download File">	
+															</a>
+															<a href="{{ announcement.announcement_file.url }}" download>
+																<b style="margin-top:20px;margin-left:20px;font-size:13px">Download Files</b>
+															</a>
+												      	</div>	
+												      	
+												      </div>
+												      {% endif %}
+												  </div>
+												  <div class="bg-white p-2" style="border-top: 1px solid #F06529">
+												      <div class="d-flex flex-row fs-12">
+												      	<form action="{% url 'announcement_likes' announcement.id class.id %}" method="POST" novalidate>
+												      		{% csrf_token %}
+												          <div class="like p-2 cursor">
+												          	{% if request.user not in announcement.likes.all %}
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">like</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	</button>
+												          	{% else %}
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">Unlike</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	</button> 
+												          	{% endif %}
+
+												          </div>
+												        </form>
+												          <div class="like p-2 cursor action-collapse" data-toggle="collapse" aria-expanded="true" aria-controls="collapse-1{{announcement.id}}" href="#collapse-1{{announcement.id}}"><i class="far fa-comment-dots"></i><span class="ml-1">Comment</span> <span class="badge badge-pill badge-info">{{announcement.comments.all.count}}</span></div>
+												      </div>
+												  </div>
+												  <div id="collapse-1{{announcement.id}}" class="collapse" style="margin-bottom:10px;border-top:1px solid #F06529" data-parent="#myGroup">
+
+												  	{% if not announcement.comments.all %}
+												  	<div class="bg-white p-2 text-center">
+												  		<p>No Comments yet ... Add one </p>
+												  	</div>
+												  	{% else %}
+												  	{% for comment in announcement.comments.all %}
+												  	  <div class="bg-white p-2" style="margin-left:15px;">
+													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
+													          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{comment.user.first_name}}</span><span class="date text-black-50">Commented - {{comment.comment_date|timesince}} ago</span></div>
+													      </div>
+													      <div class="mt-2">
+													          <p class="comment-text">{{comment.comment_text}}</p>
+													      </div>
+													  </div>
+													  <hr style="border-top: 1px solid #d1c7c7;">
+													  {% endfor %}
+													  {% endif %}
+													  <hr style="border-top: 1px solid #d1c7c7;">
+
+													  <form method="POST" action="{% url 'announcement_comments' announcement.id class.id %}">
+													  	{% csrf_token %}
+												      <div class="d-flex flex-row align-items-start" style="margin-left:25px;"><img class="rounded-circle" src="{{request.user.userprofile.profile_pic.url}}" width="40"><textarea class="form-control ml-1 shadow-none textarea" name="comment_text" required></textarea></div>
+												      <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="submit">Post comment <i class="fa fa-paper-plane"></i></button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
+												      </div>
+												  	  </form>
+												  </div>
+												</div>
+						    				</div>
+						    			</div>
+						    			{% endfor %}
+						    			{% endif %}
 						    		</div>
 							    </div>
 							</div>
@@ -223,68 +202,111 @@
 							  </button>
 							  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 							    <a class="dropdown-item" data-toggle="modal" data-target="#addAssignmentModal" ><i class="fas fa-file-alt"></i> Assignment</a>
-							    <a class="dropdown-item" href="#"><i class="far fa-file-alt"></i> Assignment Quiz</a>
+							    <a class="dropdown-item" data-toggle="modal" data-target="#addAssignmentQuizModal"><i class="far fa-file-alt"></i> Assignment Quiz</a>
 							    <a class="dropdown-item" href="#"><i class="fas fa-question"></i> Question</a>
 							  </div>
 							</div>
 						</div>
-						{% if assignments %}
-						{% for assignment in assignments%}
-						<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
-						  <!-- <div class="card-header">Header</div> -->
-						  <div class="card-body text-dark">
-						    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
-						    	
-						    	<span style="float:right;">
-						    		<div class="dropleft">
-								    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
-								    	</i>
-							    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
-										    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
-										    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
-										</div>
-								    </div>
-							    </span>
-						    </h4>
-						    <hr style="border-top: 1px solid #F06529;">
-
-
-						    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
-							    <div class="card-text">
-							    	<p style="text-align:left;"><i class="fas fa-file-alt"></i>
-							    		{{assignment.title}}
-							    		<small class="text-muted">
-							    			Posted {{assignment.assigning_date}}
-							    		</small><i class="fa fa-clock-o" aria-hidden="true"></i>
-							    		<span style="float:right;color:#ff3333">
-							    			Due date: {{assignment.due_date}}
-							    		</span>
-							    	</p>
+						<div class="card border-0" style="max-width: 60rem">
+							<h5 class="card-header mb-3">Assignments</h5>
+							{% if assignments %}
+							{% for assignment in assignments%}
+							<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
+							  
+							  <div class="card-body text-dark">
+							    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
 							    	
-							    </div>
-							    <div style="clear: both"></div>
-							</div>
+							    	<span style="float:right;">
+							    		<div class="dropleft">
+									    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+									    	</i>
+								    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
+											    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
+											    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
+											</div>
+									    </div>
+								    </span>
+							    </h4>
+							    <hr style="border-top: 1px solid #F06529;">
 
-							<div id="collapse{{ forloop.counter }}" class="collapse">
-								<p class="card-text">
-									{% if assignment.file %}
-									<a style="margin-right:3px" href="{{ assignment.file.url }}" target="_blank">
-										<i class="fas fa-eye"> view file</i>
-									</a>
-									<a href="{{ assignment.file.url }}">
-										<i class="fas fa-file-download"> download file</i>
-									</a>
-									{% endif %}
-								</p>
-								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
-								<hr style="border-top: 1px solid #8c8b8b;">
-								
-							</div>
 
-						  </div>
+							    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
+								    <div class="card-text">
+								    	<p style="text-align:left;"><i class="fas fa-file-alt"></i>
+								    		{{assignment.title}}
+								    		<small class="text-muted">
+								    			Posted {{assignment.assigning_date}}
+								    		</small><i class="fa fa-clock-o" aria-hidden="true"></i>
+								    		<span style="float:right;color:#ff3333">
+								    			Due date: {{assignment.due_date}}
+								    		</span>
+								    	</p>
+								    	
+								    </div>
+								    <div style="clear: both"></div>
+								</div>
+
+								<div id="collapse{{ forloop.counter }}" class="collapse">
+									<p class="card-text">
+										{% if assignment.file %}
+										<a style="margin-right:3px" href="{{ assignment.file.url }}" target="_blank">
+											<i class="fas fa-eye"> view file</i>
+										</a>
+										<a href="{{ assignment.file.url }}">
+											<i class="fas fa-file-download"> download file</i>
+										</a>
+										{% endif %}
+									</p>
+									<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
+									<hr style="border-top: 1px solid #8c8b8b;">
+									<a href="{% url 'student_work' class.id %}">Student Work</a>
+								</div>
+
+							  </div>
+							</div>
+							{% endfor %}
+							{% endif %}
 						</div>
-						{% endfor %}
-						{% endif %}
+						<!-- Quizes Section  -->
+						<div class="card border-0 " style="max-width: 60rem">
+							<h5 class="card-header mb-3">Quizes</h5>
+							{% if quizes %}
+							{% for quiz in quizes %}
+							<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
+								<div class="card-body text-dark">
+									<h4 class="card-title" style="text-align:left;">{{quiz.name}}
+							    	
+								    	<span style="float:right;">
+								    		<div class="dropleft">
+										    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditQuiz" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+										    	</i>
+									    		<div class="dropdown-menu" aria-labelledby="dropdownEditQuiz">
+												    <a class="dropdown-item" href=""><i class="far fa-edit"></i> Update</a>
+												    <a class="dropdown-item" href=""><i class="far fa-trash-alt"></i>  Delete</a>
+												</div>
+										    </div>
+									    </span>
+								    </h4>
+								    <hr style="border-top: 1px solid #F06529;">
+								    <p class="text-muted">
+								    	Topic: {{quiz.topic}}
+								    </p>
+								    <p class="text-muted">Number of questions: {{quiz.number_of_questions}}</p>
+								    <p class="text-muted">Required score to pass: {{quiz.required_score_to_pass}} % </p>
+								    <p class="text-muted">Difficulty: {{quiz.difficulty}}</p>
+								    <p class="text-muted"></p>
+								</div>
+								<div class="card-footer">
+							      <small class="text-muted">Created: {{quiz.created|naturaltime}}</small>
+							    </div>
+							</div>
+							{% endfor %}
+							{% endif %}
+						</div>
+
+						
+
+
 
                   	</div>
                   <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
@@ -295,7 +317,7 @@
 								</div>
 								
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructors are in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructor{{instructors.count|pluralize}} are in this course</h6>
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for instructor in instructors %}
@@ -322,12 +344,14 @@
 								</div>
 								<div class="card-body">
 									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for student in students %}
 											<div class="row">
 												<div class="col-md-12 ">
 													<a>
+														<hr style="border-top: 1px solid #F06529;">
 														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
 														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
 													</a>
@@ -339,17 +363,53 @@
 								</div>
 							</div>
 							<!-- End of Total Instructors Card  -->
-
-
-
-
                   </div>
-                  
+                  <!-- Student Grades Section Start  -->
+                  <div class="tab-pane fade" id="pop4" role="tabpanel" aria-labelledby="pop4-tab">
+                  	<div class="bg pt-3">
+                  		<image src="{% static 'images/no students.png' %}" alt="Studydoorway" style="width:100%; height:100%">
+                  	</div>
+                  </div>
+                 <!--  Student Grades Section End  -->
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- The AddFile to announcement Modal -->
+
+
+<div class="modal fade" id="addFileModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Add File </h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		<input type="file" name="announcement_file" />	
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="edit_class">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+
+
+
 
 
 <!-- The Edit class Modal -->
@@ -414,7 +474,66 @@
 	</div>
 </div>
 
-<script>
+<!-- The Add Assignment Quiz Modal -->
+<div class="modal fade" id="addAssignmentQuizModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Create Assignment Quiz</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		{% csrf_token %}
+	      		{{create_quiz_form|crispy}}
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="create_quiz">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+
+<!-- Update Announcement Modal -->
+<div class="modal fade" id="addAssignmentQuizModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Update Announcement</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="update_announcement">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+
+<!-- <script>
 	/* Set the width of the sidebar to 250px (show it) */
 	function openNav() {
 	  document.getElementById("mySidepanel").style.width = "300px";
@@ -424,6 +543,6 @@
 	function closeNav() {
 	  document.getElementById("mySidepanel").style.width = "0";
 	}
-</script>
+</script> -->
 
 {% endblock %}

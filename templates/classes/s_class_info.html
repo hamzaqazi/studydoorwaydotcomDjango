@@ -1,9 +1,16 @@
 {% extends 'main.html' %}
+{% load static %}
+{% load humanize %}
+
 
 
 {% block content %}
 
-<div class="container">
+
+<link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static '/css/s_class_info.css' %}">
+
+<div class="container" style="margin-top:70px">
         <div class="row">
             <div class="col-md-12 ">
                 <nav class="nav-justified ">
@@ -11,7 +18,7 @@
                     <a class="nav-item nav-link active" id="pop1-tab" data-toggle="tab" href="#pop1" role="tab" aria-controls="pop1" aria-selected="true">Stream</a>
                     <a class="nav-item nav-link" id="pop2-tab" data-toggle="tab" href="#pop2" role="tab" aria-controls="pop2" aria-selected="false">Class Work</a>
                     <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">People</a>
-                    <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a>
+                    <!-- <a class="nav-item nav-link" id="pop3-tab" data-toggle="tab" href="#pop3" role="tab" aria-controls="pop3" aria-selected="false">Grades</a> -->
                     
                   </div>
                 </nav>
@@ -27,7 +34,7 @@
 					                    <div class="card-body pt-4">
 					                        <img src="{{class.user.userprofile.profile_pic.url}}" alt="profile-image" class="profile"/>
 					                        <h4 class="card-title">{{class.class_name}}</h4>
-					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated}}</p>
+					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated|timesince}} ago</p>
 					                        <hr style="border-top: 1px solid #F06529;">
 					                        <p class="">This class has been created by <b>{{class.user.first_name}}</b> on <strong>{{class.date_created}}</strong></p>
 					                        
@@ -37,54 +44,65 @@
 					    		</div>						    		
 					    	</div>
 					    	<div class="container">
-		                      	<div class="row" style="margin-top:20px">
-						    		<div class="col-md-2 rounded" id="cardshadow" >
+		                      	<div class="row" >
+						    		<div class="col-md-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;">
 						    			{% if assignments %}
 						    			{% for assignment in assignments%}
-						    			<h5>{{assignment.title}}</h5>
+						    			<div class="card border-0">
+						    				<div class="card-body">
+						    					<h6 class="card-title">
+						    						{{assignment.title}}
+						    					</h6>
+						    					<i class="fa fa-clock-o" id="time-left"> Time left</i>
+						    					<div class="time-until">
+						    						
+						    						{{assignment.due_date|timeuntil}}
+
+						    					</div>
+						    					
+						    				</div>
+						    			</div>
+						    			<hr style="border-top: 1px solid #F06529;">
+						    			
 						    			{% endfor %}
 						    			{% else %}
+<<<<<<< HEAD
 						    			<p>No assignments found</p>
 
+=======
+						    			<p class="text-muted mt-3" style="font-size:small;text-align:center">Wohoo! No Work</p>
+>>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
 						    			{% endif %}
 						    		</div>
-						    		<div class="col rounded" id="cardshadow" style="margin-left:20px">
-						    			<h4>card</h4>
+						    		<div class="col rounded" style="margin-top:20px">
+						    			<div class="row rounded" id="cardshadow" >
+						    				<div class="col rounded">
+						    					<div class="chip">
+												  <img src="{% static 'images/nav logo.png' %}" alt="Person" width="96" height="96">
+												  <b data-toggle="collapse" data-target="#collapseAnnounce" aria-expanded="false"aria-controls="collapseAnnounce">Announce something to your class</b>
+												</div>
+
+							    				<div id="collapseAnnounce" class="collapse">
+													<p class="card-text">Class Created :</p>
+													<p class="card-text">Section :</p>
+													<p class="card-text">Subject :</p>
+													<hr style="border-top: 1px solid #8c8b8b;">
+												</div>
+											</div>
+						    			</div>
 						    		</div>
 							    </div>
 							</div>
                       	</div>
                   	<div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
                        <div class="pt-3"></div>
-                       <div class="row" style="margin:10px">
-							<div class="dropdown">
-							  <button class="btn btn-outline-info " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i>
-							      Create
-							  </button>
-							  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-							    <a class="dropdown-item" data-toggle="modal" data-target="#addAssignmentModal" ><i class="fas fa-file-alt"></i> Assignment</a>
-							    <a class="dropdown-item" href="#"><i class="far fa-file-alt"></i> Assignment Quiz</a>
-							    <a class="dropdown-item" href="#"><i class="fas fa-question"></i> Question</a>
-							  </div>
-							</div>
-						</div>
 						{% if assignments %}
 						{% for assignment in assignments%}
 						<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
 						  <!-- <div class="card-header">Header</div> -->
 						  <div class="card-body text-dark">
-						    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
-						    	
-						    	<span style="float:right;">
-						    		<div class="dropleft">
-								    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
-								    	</i>
-							    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
-										    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
-										    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
-										</div>
-								    </div>
-							    </span>
+						    <h4 class="card-title" style="text-align:left;">
+						    	{{assignment.title}}
 						    </h4>
 						    <hr style="border-top: 1px solid #F06529;">
 
@@ -114,10 +132,15 @@
 									<a href="{{ assignment.file.url }}">
 										<i class="fas fa-file-download"> download file</i>
 									</a>
+									{% else %}
+									<h6>No file included </h6>
 									{% endif %}
 								</p>
 								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
 								<hr style="border-top: 1px solid #8c8b8b;">
+								<a style="margin-right:3px" href="" data-toggle="modal" data-target="#submitAssignmentModal">
+									<i class="fa fa-upload"> Submit Assignment</i>
+								</a>
 								
 							</div>
 
@@ -135,15 +158,19 @@
 								</div>
 								
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructors are in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{instructors.count}} Instructor{{instructors.count|pluralize}} are in this course</h6>
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for instructor in instructors %}
 											<div class="row">
 												<div class="col-md-12 ">
 													<a>
-														<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+														<div class="chip">
+														  <img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+														  <b>{{instructor.instructor.first_name}} {{instructor.instructor.last_name}}</b>
+														</div>
+														<!-- <img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b> -->
 													</a>
 												</div>
 											</div>
@@ -161,15 +188,35 @@
 									<h4>Students</h4>
 								</div>
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} student{{students.count|pluralize}} are enrolled in this course</h6>
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for student in students %}
-											<div class="row">
+											<div class="row"  style="border-left:3px solid #F06529;margin-top:5px;">
 												<div class="col-md-12 ">
 													<a>
-														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
+														{% if student.student.username == request.user.username %}
+														<div class="chip">
+														  <img src="{{student.student.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+														  <b style="color:#8dd457">{{student.student.first_name}} {{student.student.last_name}} (Me)</b>
+														</div>
+														<!-- <img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class=" font-size-sm" style="color:#8dd457">{{student.student.first_name}} {{student.student.last_name}} (Me)</b> -->
+														<span class="fa fa-clock-o " style="color:#8dd457">
+															Joined {{student.added_at|timesince}} ago
+														</span>
+														{% else %}
+														<div class="chip">
+														  <img src="{{student.student.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
+														  <b>{{student.student.first_name}} {{student.student.last_name}}</b>
+														</div>
+														<!-- <img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+														<b class="text-muted font-size-sm">{{student.student.first_name}} {{student.student.last_name}}</b> -->
+														<span class="fa fa-clock-o" style="color:#7bc5ed">
+															Joined {{student.added_at|timesince}} ago
+														</span>
+														
+														{% endif %}
 													</a>
 												</div>
 											</div>
@@ -191,6 +238,7 @@
     </div>
 
 
+<<<<<<< HEAD
 <br>
 
 
@@ -214,4 +262,93 @@
   </div>
 </div>
 
+=======
+    <!-- The Submit Assignment Modal -->
+<div class="modal fade" id="submitAssignmentModal">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	  
+	    <!-- Modal Header -->
+	    <div class="modal-header">
+	      <h4 class="modal-title">Submit Assignment</h4>
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	    </div>
+	    
+
+	    <form method="POST",action="", enctype="multipart/form-data">
+	    	<!-- Modal body -->
+		    <div class="modal-body">
+	    		
+		    </div>
+		    
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      <button type="submit" class="btn btn-outline-success" name="edit_class">Save</button>
+		    </div>
+	    </form>
+	    
+	  </div>
+	</div>
+</div>
+<!-- <script type="text/javascript">
+	console.log("hello s_class_info.html")
+	const assignmentBox = document.getElementById("assignment-box")
+	const countdownBox = document.getElementById("countdown-box")
+	const dueDate = Date.parse(assignmentBox.textContent)
+setInterval(()=>{
+	const now = new Date().getTime()
+
+	const diff = dueDate-now
+
+	const d = Math.floor(dueDate / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
+	const h = Math.floor((dueDate / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
+	const m = Math.floor((dueDate / (1000 * 60) - (now / (1000 * 60))) % 60)
+	const s = Math.floor((dueDate / (1000) - (now / (1000))) % 60)
+	console.log(s)
+	if (diff>0) {
+		countdownBox.innerHTML = `<small> ${d} days, ${h}:${m}:${s}</small>`
+	}
+},1000)
+
+
+</script> -->
+<!-- <script type="text/javascript">
+	console.log("hello! s_class_info.html")
+	$('[data-countdown]').each(function(){
+		var $deadline = new Date($(this).data('countdown')).getTime();
+		// $deadline = (Date.parse($deadline)/1000);
+		console.log($deadline)
+		
+		var $dataDays = $(this).children('[data-days]');
+		var $dataHours = $(this).children('[data-hours]');
+		var $dataMinuts = $(this).children('[data-minuts]');
+		var $dataSeconds = $(this).children('[data-seconds]');
+		// console.log($deadline)
+
+		var x = setInterval(function(){
+			var now = new Date().getTime();
+			var t = $deadline - now;
+
+			const days = Math.floor($deadline / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
+			// const hours = Math.floor(($deadline / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
+			// const minuts = Math.floor(($deadline / (1000 * 60) - (now / (1000 * 60))) % 60)
+			// const seconds = Math.floor(($deadline / (1000) - (now / (1000))) % 60)
+			// var days = Math.floor(t/(1000*60*60*24));
+			
+			var hours = Math.floor(t%(1000 * 60 * 60 * 24)/(1000 * 60 * 60));
+			var minuts = Math.floor(t%(1000 * 60 * 60)/(1000 * 60));
+			var seconds = Math.floor(t%(1000 * 60)/(1000));
+			// console.log(days)
+			$dataDays.html(days);
+			$dataHours.html(hours);
+			$dataMinuts.html(minuts);
+			$dataSeconds.html(seconds);
+
+		},1000)
+		// console.log($(this).data('countdown'))
+		// console.log($deadline)
+	})
+</script> -->
+>>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
 {% endblock %}

@@ -58,11 +58,69 @@
   		box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 	}
 
+
+	/* Avatar group css */
+  .avatar-group.avatar-group-lg.avatar-group-overlapped .avatar {
+    margin-right: -15px;
+  }
+  .avatar-group.avatar-group-lg .avatar {
+    font-size: .95rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .avatar-group {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+  }
+
+  .avatar-group .avatar {
+      font-size: .9rem;
+      width: 2.625rem;
+      height: 2.625rem;
+  }
+  .avatar .avatar-img {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+
+  /*notification list css*/
+  .list-group {
+  	font-size: 13px;
+  }
+	
+/*.header {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  background-color: #f1f1f1;
+}
+
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #ccc;
+}
+
+
+.progress-bar {
+  height: 8px;
+  background: #F06529;
+  width: 0%;
+}*/  
+
 </style>
 
+<!-- <div class="header" style="margin-top:70px">
+  <div class="progress-container">
+    <div class="progress-bar" id="myBar"></div>
+  </div>
+</div> -->
 
-
-<div class="row justify-content-center" style="margin-top:70px">
+<div class="row justify-content-center" style="margin-top:90px" >
 	<button style="margin-right:5px;" class="btn btn-outline-info" data-toggle="modal" data-target="#myModalCreate" ><i class="fa fa-plus-circle"></i> Create Class</button>
 	<button class="btn btn-outline-info" data-toggle="modal" data-target="#myModalJoin" ><i class="fa fa-handshake-o"></i> Join Class</button>
 </div>
@@ -108,7 +166,9 @@
 	      <h4 class="modal-title">Enroll in a new Classroom</h4>
 	      <button type="button" class="close" data-dismiss="modal">&times;</button>
 	    </div>
-	    
+	    {% for msg in messages %}
+        <p class="text-success">{{msg}}</p>
+        {% endfor %}
 
 	    <form method="POST",action="", enctype="multipart/form-data">
 	    	<!-- Modal body -->
@@ -164,9 +224,19 @@
 						<hr style="border-top: 1px solid #8c8b8b;">
 					</div>
 
-					<img src="{{class.user.userprofile.profile_pic.url}}" alt="Avatar"class="avatar float-right">
-					<p class="card-text text-center">Ask class creator <b> {{class.user}}</b> for joining key </p>
-					<p class="card-text text-center"><b><i class="fas fa-phone"></i>{{class.user.userprofile.phone}}</b></p>		
+					<!-- Avatar group of students joined  -->
+					<div class="avatar-group avatar-group-lg avatar-group-overlapped mr-40 mt-25">
+					    <div class="avatar">
+					        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="avatar-img rounded-circle">
+					    </div>
+					    <div class="avatar">
+					        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="user" class="avatar-img rounded-circle">
+					    </div>
+					    <div class="avatar">
+					        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="user" class="avatar-img rounded-circle">
+					    </div>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -185,36 +255,63 @@
 		<div class="col-md-3" style="margin-top:20px">
 			<div class="card" id="cardshadow" >
 				<a href="{% url 's_class_info' class.id %}">
-				<img class="card-img-top" id="title_image" src="{{class.title_image.url}}" >
-				<div class="card-body"></a>
+					<img class="card-img-top" id="title_image" src="{{class.title_image.url}}">
+				</a>
+				<div class="card-body">
 					<h5 class="card-title">
 						{{class.class_name}}
-						{% if forloop.counter == 1 %}
-						<i class="fa fa-info float-right" title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}"></i>
-						<!-- <small class="text-muted float-right">info</small> -->
-
-						{%else%}
-
-						<i class="fa fa-info float-right"title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}"></i>
-						
-						{% endif %}
+						<i class="fa fa-info float-right" title="Info" data-toggle="collapse" data-target="#collapse{{class.id}}" aria-expanded="false" aria-controls="collapse{{class.id}}"></i>
 					</h5>
-					
 					<hr style="border-top: 1px solid #8c8b8b;">
 					
-					<div id="collapse{{ forloop.counter }}" class="collapse">
+					<div id="collapse{{class.id}}" class="collapse">
 						<p class="card-text"><small class="text-muted">Class Created : {{class.date_created}}</small></p>
 						<p class="card-text"><small class="text-muted">Section : {{class.section}}</small></p>
 						<p class="card-text"><small class="text-muted">Subject : {{class.subject}}</small></p>
 						<hr style="border-top: 1px solid #8c8b8b;">
 					</div>
+					<div class="text-center">
+						<button class="btn btn-outline-info btn-sm mb-3"  data-toggle="collapse" data-target="#collapsee{{class.id}}" aria-expanded="false" aria-controls="collapsee{{class.id}}">
+							<i class="fa fa-bell mr-2" aria-hidden="true">
+							</i>Notifications
+						</button>
+						<span class="badge badge-danger ml-2 pt-3">	
+							{{class.notification_set.count}}
+						</span>
+						{% for n in class.notification_set.all %}
+					</div>
+					<div class="collapse mb-2" id="collapsee{{class.id}}">
+						<ul class="list-group list-group-flush">
+						  <li class="list-group-item list-group-item-secondary"> {{n.user}} uploaded {{n.title}} 
+						  	<a href="{% url 'delete_notification' n.id %}">Mark as Read</a>
+						  </li>
+						</ul>
+						{% endfor %}
+					</div>
 
-					<img src="{{class.user.userprofile.profile_pic.url}}" alt="Avatar"class="avatar float-right">
-					<p class="card-text text-center">Ask class creator for joining key <b> {{class.user}}</b></p>		
+					<!-- Avatar group of class joined students  -->
+					{% for s in class.student_set.all|slice:":4" %}
+					<div class="avatar-group avatar-group-lg avatar-group-overlapped mr-40 mt-25">
+					    <div class="avatar">
+					        <img src="{{s.student.userprofile.profile_pic.url}}" alt="user" class="avatar-img rounded-circle">
+					    </div>
+					</div>
+					{% endfor %}
+					<span class="float-right text-success mt-2">+{{class.student_set.count}} other{{class.student_set.count|pluralize}} Joined</span>
 				</div>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
 </div>
+<!-- <script type="text/javascript">
+	window.onscroll = function() {myFunction()};
+
+	function myFunction() {
+	  var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+	  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+	  var scrolled = (winScroll / height) * 100;
+	  document.getElementById("myBar").style.width = scrolled + "%";
+	}
+</script> -->
 {% endblock %}

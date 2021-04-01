@@ -22,7 +22,94 @@
      	transform: scale(1.05);
   	 	box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 	}
-	
+
+  /* Avatar group css */
+  .avatar-group.avatar-group-lg.avatar-group-overlapped .avatar {
+    margin-right: -15px;
+  }
+  .avatar-group.avatar-group-lg .avatar {
+    font-size: .95rem;
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+  .avatar-group {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+  }
+
+  .avatar-group .avatar {
+      font-size: .9rem;
+      width: 2.625rem;
+      height: 2.625rem;
+  }
+  .avatar .avatar-img {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+  
+	/*card counter*/
+
+  .card-counter{
+    box-shadow: 2px 2px 10px #DADADA;
+    margin: 5px;
+    padding: 20px 10px;
+    background-color: #fff;
+    height: 100px;
+    border-radius: 5px;
+    transition: .3s linear all;
+  }
+
+  .card-counter:hover{
+    box-shadow: 4px 4px 20px #DADADA;
+    transition: .3s linear all;
+  }
+
+  .card-counter.primary{
+    background-color: #007bff;
+    color: #FFF;
+  }
+
+  .card-counter.danger{
+    background-color: #ef5350;
+    color: #FFF;
+  }  
+
+  .card-counter.success{
+    background-color: #66bb6a;
+    color: #FFF;
+  }  
+
+  .card-counter.info{
+    background-color: #26c6da;
+    color: #FFF;
+  }  
+
+  .card-counter i{
+    font-size: 5em;
+    opacity: 0.2;
+  }
+
+  .card-counter .count-numbers{
+    position: absolute;
+    right: 35px;
+    top: 20px;
+    font-size: 32px;
+    display: block;
+  }
+
+  .card-counter .count-name{
+    position: absolute;
+    right: 35px;
+    top: 65px;
+    font-style: italic;
+    text-transform: capitalize;
+    opacity: 0.5;
+    display: block;
+    font-size: 18px;
+  }
 </style>
 
 
@@ -33,212 +120,122 @@
       <div class="row  justify-content-center align-items-center d-flex text-center h-100">
         <div class="col-12 col-md-8  h-50 ">
             <h1 class="display-2  text-light mb-2 mt-5"style="text-shadow: 2px 2px #00004d;"><strong>Studydoorway</strong> </h1>
-            <p class="lead  text-light mb-5" style="text-shadow: 2px 2px #00004d;">"Online learning is not the next big thing, it is the now big thing.”</p>
-            {% if user.is_authenticated and user.userprofile.role == 'Student' %}
-            <p class="lead  text-light mb-5">"You are now loged in as <b style="color: #ffcc80;text-shadow: 2px 2px #00004d;">Student</b>"</p>
-			<p>
-				<a href="{% url 'register_as_teacher' user.userprofile.id %}" class="btn bg-danger shadow-lg btn-round text-light btn-lg btn-rised">Register as Lecturer</a>
-			</p>
-			<p class="lead mb-10" style="color: #e066ff;text-shadow: 1px 1px #00004d;">And Be Part of Studydoorway Online Learning platform</p>
-					{% else %}
-          <p class="lead  text-light mb-5">"You are now loged in as <b style="color: #ffcc80;text-shadow: 2px 2px #00004d;">Teacher"</b></p>
-          <p>
-            <a href="{% url 'register_as_teacher' user.userprofile.id %}" class="btn bg-danger shadow-lg btn-round text-light btn-lg btn-rised">Register as Student</a>
-          </p>
-          <p class="lead mb-10" style="color: #e066ff;text-shadow: 1px 1px #00004d;">And Be Part of Studydoorway Online Learning platform</p>
-          {% endif %}
-			<div class="btn-container-wrapper p-relative d-block  zindex-1">
-				<a class="btn btn-link btn-lg mt-md-3 mb-4 scroll align-self-center text-light" href="#corosel">
-				    <i class="fa fa-angle-down fa-4x text-light"></i>
-				</a>   
-			</div>   
+            <p class="lead  text-light mb-5" style="text-shadow: 2px 2px #00004d;">"Online learning is not the next big thing, it is the now big thing.”
+            </p>
+      			<p>
+      				<a href="{% url 'create_class' %}" class="btn bg-danger shadow-lg btn-round text-light btn-lg btn-rised">Join Us</a>
+      			</p>
+             <p class="lead mb-10" style="color: white; text-shadow: 1px 1px #00004d;"> By creating or joining a classroom</p>
+            <p class="lead mb-10" style="color: #e066ff;text-shadow: 1px 1px #00004d;">And Be Part of Studydoorway Online Learning platform
+            </p>
+      			<div class="btn-container-wrapper p-relative d-block  zindex-1">
+      				<a class="btn btn-link btn-lg mt-md-3 mb-4 scroll align-self-center text-light" href="#corosel">
+      				    <i class="fa fa-angle-down fa-4x text-light"></i>
+      				</a>   
+      			</div>   
         </div>
       </div>
     </div>
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="justify-content-center" id="corosel">
-
-    
-    <!--Carousel Wrapper-->
-    <div id="multi-item-example" class="carousel slide carousel-multi-item" data-ride="carousel">
-
-      <!--Controls-->
-      <div class="controls-top text-center" style="margin:15px">
-        <a class="btn-floating" href="#multi-item-example" data-slide="prev"><i class="fas fa-caret-square-left fa-3x"></i></a>
-        <a class="btn-floating" href="#multi-item-example" data-slide="next"><i class="fas fa-caret-square-right fa-3x"></i></a>
+<div class="container py-3">
+  <div class="row">
+    <div class="col-md-5 m-4">
+      <div class="card border-0">
+        <div class="card-body">
+          <canvas id="myChart" width="450" height="200"></canvas>      
+        </div>
       </div>
-      <!--/.Controls-->
-
-      <!--Indicators-->
-      <ol class="carousel-indicators">
-        <li data-target="#multi-item-example" data-slide-to="0" class="active"></li>
-        <li data-target="#multi-item-example" data-slide-to="1"></li>
-        <li data-target="#multi-item-example" data-slide-to="2"></li>
-      </ol>
-      <!--/.Indicators-->
-
-      <!--Slides-->
-      <div class="carousel-inner" role="listbox">
-
-        <!--First slide-->
-        <div class="carousel-item active">
-        	
-          <div class="row">
-          	{% for class in classes|slice:"0:3" %}
-            <div class="col-md-4">
-              <div class="card mb-2">
-                <img class="card-img-top" src="{{class.title_image.url}}" alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">{{class.class_name}}</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-			{% endfor %}            
-<!-- 
-            <div class="col-md-4 clearfix d-none d-md-block">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(18).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4 clearfix d-none d-md-block">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(35).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div> -->
-          </div>
-          
-
-        </div>
-        <!--/.First slide-->
-
-        <!--Second slide-->
-        <div class="carousel-item">
-
-          <div class="row">
-          	{% for class in classes|slice:"3:6" %}
-            <div class="col-md-4">
-              <div class="card mb-2">
-                <img class="card-img-top" src="{{class.title_image.url}}" alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">{{class.class_name}}</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-
-            <!-- <div class="col-md-4 clearfix d-none d-md-block">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/City/4-col/img%20(47).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4 clearfix d-none d-md-block">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/City/4-col/img%20(48).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div> -->
-          </div>
-
-        </div>
-        <!--/.Second slide-->
-
-        <!--Third slide-->
-        <div class="carousel-item">
-
-          <div class="row">
-            <div class="col-md-4">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/Food/4-col/img%20(53).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4 clearfix d-none d-md-block">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/Food/4-col/img%20(45).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4 clearfix d-none d-md-block">
-              <div class="card mb-2">
-                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Horizontal/Food/4-col/img%20(51).jpg"
-                  alt="Card image cap">
-                <div class="card-body">
-                  <h4 class="card-title">Card title</h4>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a class="btn btn-primary">Button</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <!--/.Third slide-->
-
-      </div>
-      <!--/.Slides-->
-
     </div>
-    <!--/.Carousel Wrapper-->
+    <div class="col-md-5 m-4">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card-counter danger">
+            <i class="fa fa-users"></i>
+            <span class="count-numbers">{{users}}</span>
+            <span class="count-name">Users</span>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card-counter success">
+            <i class="fas fa-user-graduate"></i>
+            <span class="count-numbers">{{instructors}}</span>
+            <span class="count-name">Instructors</span>
+          </div>
+        </div>
 
+        <div class="col-md-6">
+          <div class="card-counter info">
+            <i class="fas fa-book-reader"></i>
+            <span class="count-numbers">{{students}}</span>
+            <span class="count-name">Students</span>
+          </div>
+        </div>
 
+        <div class="col-md-6">
+          <div class="card-counter primary">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span class="count-numbers">{{classes.count}}</span>
+            <span class="count-name">Classrooms</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
-
-
-
-
+</div>
+<div class="container py-3">
+  <div class="avatar-group avatar-group-lg avatar-group-overlapped mr-40 mt-25">
+      <div class="avatar">
+          <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="avatar-img rounded-circle">
+      </div>
+      <div class="avatar">
+          <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="user" class="avatar-img rounded-circle">
+      </div>
+      <div class="avatar">
+          <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="user" class="avatar-img rounded-circle">
+      </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Users','Instructors','Students',],
+        datasets: [{
+            label: ['Total'],
+            data: ['{{users}}','{{instructors}}','{{students}}'],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
 {% endblock %}

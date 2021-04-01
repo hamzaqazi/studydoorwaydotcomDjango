@@ -39,15 +39,31 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
+=======
+    'django.contrib.humanize',
+
+>>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
     'accounts.apps.AccountsConfig',
     'classes.apps.ClassesConfig',
     'crispy_forms',
     'phonenumber_field',
+<<<<<<< HEAD
     'chat',
     'rest_framework',
     
+=======
+    'internetforum',
+    'ckeditor',
+    'ckeditor_uploader',
+
+    'quizes',
+    'questions',
+    'results',
+>>>>>>> 9330c2de92cf9ca47d380d9b6c4f11609297c1ae
 ]
 
+CKEDITOR_UPLOAD_PATH = "uploads/"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
@@ -131,7 +147,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Karachi'
 
 USE_I18N = True
 
@@ -145,12 +161,27 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
+STATIC_ROOT = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
+    BASE_DIR / 'static',
+    BASE_DIR / 'quizes' /'static',
+    # os.path.join(BASE_DIR,'static'),
+
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 1060,
+        'extraPlugins': ','.join(
+            [
+                'codesnippet',
+            ]),
+    },
+}
 
 # Email verification 
 
