@@ -166,6 +166,8 @@ def student_work_view(request,class_id):
 		'class':get_object_or_404(ClassRoom, pk=class_id),
 	}
 	return render(request,'classes/student_work.html',context)
+
+
 @login_required
 def s_class_info_view(request,id):
 	assignments = Assignment.objects.filter(class_room = id)
@@ -216,3 +218,44 @@ def delete_notification_view(request,notification_id):
 	notification.viewed = True
 	notification.delete()
 	return redirect('create_class')
+
+
+def s_assignment_detail_view(request,class_id,assignment_id):
+	classroom = ClassRoom.objects.get(id=class_id)
+	assignment = Assignment.objects.get(id=assignment_id)
+	submission_form = SubmitAssignment()
+	
+	if Submission.objects.filter(user=request.user,assignment=assignment).exists():
+		s_submission = Submission.objects.get(user=request.user,assignment=assignment)
+	else:
+		s_submission = ''
+
+	if request.method == 'POST':
+		if 'submit_assignment' in request.POST:
+			submission_form = SubmitAssignment(request.POST,request.FILES)
+			if submission_form.is_valid():
+				instance = submission_form.save(commit=False)
+				instance.user = request.user
+				instance.assignment = Assignment.objects.get(id=assignment_id)
+				instance.save()
+				messages.success(request, 'Assignment submitted successfully')
+				return redirect('s_class_info',id=class_id)
+
+	context = {
+		'assignment': assignment,
+		'submission_form': submission_form,
+		's_submission' : s_submission,
+	}
+	return render(request,'classes/s_assignment_detail.html',context)
+
+# def submit_assignment_view(request,id,assignment_id):
+# 	if request.method == 'POST':
+# 		if 'submit_assignment' in request.POST:
+# 			submission_form = SubmitAssignment(request.POST,request.FILES)
+# 			if submission_form.is_valid():
+# 				instance = submission_form.save(commit=False)
+# 				instance.user = request.user
+# 				instance.assignment = Assignment.objects.get(id=assignment_id)
+# 				instance.save()
+# 				messages.success(request, 'Assignment Submitted successfully')
+# 				return redirect('s_class_info',id=id)

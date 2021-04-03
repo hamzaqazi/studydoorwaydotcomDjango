@@ -87,7 +87,7 @@ class Assignment(models.Model):
 	file = models.FileField(blank=True,upload_to='files/t_assignments/')
 	points = models.CharField(max_length=100, null=True, choices=POINTS, default=100)
 	due_date = models.DateTimeField()
-	assigning_date = models.DateField(auto_now_add=True)
+	assigning_date = models.DateTimeField(auto_now_add=True)
 	last_updated = models.DateTimeField(auto_now=True)
 	user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='assignments')
 
@@ -98,8 +98,8 @@ class Assignment(models.Model):
 
 class Submission(models.Model):
 	file = models.FileField(upload_to='files/s_submissions/')
-	submitted_at = models.DateField(auto_now=True)
-	last_updated = models.DateField(auto_now=True)
+	submitted_at = models.DateTimeField(auto_now=True)
+	last_updated = models.DateTimeField(auto_now=True)
 	assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
 	grade = models.CharField(max_length=100, blank=True, null=True, default='No grade yet')

@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
 {% load static %}
 {% load humanize %}
+{% load crispy_forms_tags %}
 
 
 
@@ -128,12 +129,12 @@
 										<i class="fas fa-file-download"> download file</i>
 									</a>
 									{% else %}
-									<h6>No file included </h6>
+									<h6 class="text-muted ml-3">No file included </h6>
 									{% endif %}
 								</p>
 								<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
 								<hr style="border-top: 1px solid #8c8b8b;">
-								<a style="margin-right:3px" href="" data-toggle="modal" data-target="#submitAssignmentModal">
+								<a style="margin-right:3px" href="{% url 's_assignment_detail' class.id assignment.id %}">
 									<i class="fa fa-upload"> Submit Assignment</i>
 								</a>
 								
@@ -222,9 +223,6 @@
 							</div>
 							<!-- End of Total Instructors Card  -->
 
-
-
-
                   </div>
                   
                 </div>
@@ -233,91 +231,5 @@
     </div>
 
 
-    <!-- The Submit Assignment Modal -->
-<div class="modal fade" id="submitAssignmentModal">
-	<div class="modal-dialog">
-	  <div class="modal-content">
-	  
-	    <!-- Modal Header -->
-	    <div class="modal-header">
-	      <h4 class="modal-title">Submit Assignment</h4>
-	      <button type="button" class="close" data-dismiss="modal">&times;</button>
-	    </div>
-	    
 
-	    <form method="POST",action="", enctype="multipart/form-data">
-	    	<!-- Modal body -->
-		    <div class="modal-body">
-	    		
-		    </div>
-		    
-		    <!-- Modal footer -->
-		    <div class="modal-footer">
-		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-		      <button type="submit" class="btn btn-outline-success" name="edit_class">Save</button>
-		    </div>
-	    </form>
-	    
-	  </div>
-	</div>
-</div>
-<!-- <script type="text/javascript">
-	console.log("hello s_class_info.html")
-	const assignmentBox = document.getElementById("assignment-box")
-	const countdownBox = document.getElementById("countdown-box")
-	const dueDate = Date.parse(assignmentBox.textContent)
-setInterval(()=>{
-	const now = new Date().getTime()
-
-	const diff = dueDate-now
-
-	const d = Math.floor(dueDate / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
-	const h = Math.floor((dueDate / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
-	const m = Math.floor((dueDate / (1000 * 60) - (now / (1000 * 60))) % 60)
-	const s = Math.floor((dueDate / (1000) - (now / (1000))) % 60)
-	console.log(s)
-	if (diff>0) {
-		countdownBox.innerHTML = `<small> ${d} days, ${h}:${m}:${s}</small>`
-	}
-},1000)
-
-
-</script> -->
-<!-- <script type="text/javascript">
-	console.log("hello! s_class_info.html")
-	$('[data-countdown]').each(function(){
-		var $deadline = new Date($(this).data('countdown')).getTime();
-		// $deadline = (Date.parse($deadline)/1000);
-		console.log($deadline)
-		
-		var $dataDays = $(this).children('[data-days]');
-		var $dataHours = $(this).children('[data-hours]');
-		var $dataMinuts = $(this).children('[data-minuts]');
-		var $dataSeconds = $(this).children('[data-seconds]');
-		// console.log($deadline)
-
-		var x = setInterval(function(){
-			var now = new Date().getTime();
-			var t = $deadline - now;
-
-			const days = Math.floor($deadline / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
-			// const hours = Math.floor(($deadline / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
-			// const minuts = Math.floor(($deadline / (1000 * 60) - (now / (1000 * 60))) % 60)
-			// const seconds = Math.floor(($deadline / (1000) - (now / (1000))) % 60)
-			// var days = Math.floor(t/(1000*60*60*24));
-			
-			var hours = Math.floor(t%(1000 * 60 * 60 * 24)/(1000 * 60 * 60));
-			var minuts = Math.floor(t%(1000 * 60 * 60)/(1000 * 60));
-			var seconds = Math.floor(t%(1000 * 60)/(1000));
-			// console.log(days)
-			$dataDays.html(days);
-			$dataHours.html(hours);
-			$dataMinuts.html(minuts);
-			$dataSeconds.html(seconds);
-
-		},1000)
-		// console.log($(this).data('countdown'))
-		// console.log($deadline)
-	})
-</script> -->
 {% endblock %}

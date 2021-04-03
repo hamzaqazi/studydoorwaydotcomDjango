@@ -48,9 +48,6 @@ class JoinClassRoom(forms.Form):
 class CreateAnnouncement(ModelForm):
 	class Meta:
 		model = Announcement
-		# widgets = {
-		# 	'announcement_text':forms.Textarea(attrs={'rows':3,'cols':15})
-		# }
 		fields = '__all__'
 
 
@@ -58,4 +55,9 @@ class CreateQuiz(ModelForm):
 	class Meta:
 		model = Quiz
 		fields = '__all__'
+		
+class SubmitAssignment(ModelForm):
+	class Meta:
+		model = Submission
+		fields = ['file']
 		
