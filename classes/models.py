@@ -99,9 +99,9 @@ class Assignment(models.Model):
 class Submission(models.Model):
 	file = models.FileField(upload_to='files/s_submissions/')
 	submitted_at = models.DateTimeField(auto_now=True)
-	last_updated = models.DateTimeField(auto_now=True)
-	assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+	last_updated = models.DateTimeField(null=True)
+	assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE,related_name='submissions')
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	grade = models.CharField(max_length=100, blank=True, null=True, default='No grade yet')
 	feedback = models.CharField(max_length=100, blank=True, null=True, default='No feedback yet')
 

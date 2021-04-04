@@ -38,7 +38,10 @@
 		<div class="col-sm-3 m-2">
 			<div class="card rounded">
 				<div class="card-body">
-					<h5 class="card-title text-muted">Your Work<span class="float-right">Graded</span></h5>
+					<h5 class="card-title text-muted">Your Work
+						{% if s_submission.grade != 'No grade yet' %}<span class="float-right">{{s_submission.grade}}/{{s_submission.assignment.points}}</span>
+						{% else %}<span class="float-right">Not Graded</span>{% endif %}
+					</h5>
 					{% if s_submission %}
 					<div class="card rounded p-1 m-1">
 						<p class="float-left">
@@ -46,6 +49,10 @@
 						<a href="{{ s_submission.file.url }}">{{s_submission.file|getfilename}}</a>
 						</p>
 						<p class="text-muted" style="font-size:small;">Submitted at . {{s_submission.submitted_at|date:"d M, Y"}}</p>
+						{% if s_submission.last_updated %}
+						<p class="text-muted" style="font-size:small;">Last updated . {{s_submission.last_updated|naturaltime}}</p>
+						{% endif %}
+
 					</div>
 					<div class="card rounded p-1">
 						<button class="btn btn-outline-primary btn-block" type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i>Add or create</button>
@@ -55,13 +62,14 @@
 						    	<form method="POST",action="", enctype="multipart/form-data">
 						    		{% csrf_token %}
 						      		{{submission_form|crispy}}
-								</form>
+								
 							</a>
 						</div>
 						<div class="text-center m-2 p-2">
-				      		<button type="submit" class="btn btn-primary btn-block" name="submit_assignment">
+				      		<button type="submit" class="btn btn-primary btn-block" name="resubmit_assignment">
 				      			Resubmit
 				      		</button>
+				      		</form>
 					    </div>
 					</div>
 					{% else %}

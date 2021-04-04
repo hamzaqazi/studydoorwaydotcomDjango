@@ -8,6 +8,7 @@ from .models import *
 from accounts.models import *
 from django.views.generic.detail import DetailView
 from quizes.models import Quiz
+import datetime
 
 @login_required
 def create_class_view(request):
@@ -24,7 +25,7 @@ def create_class_view(request):
 
 
 
-	if request.method =='POST':
+	if request.method == 'POST':
 		if 'create_classroom' in request.POST:
 			form = CreateClassRoom(request.POST,request.FILES)
 			if form.is_valid():
@@ -91,6 +92,8 @@ def class_info_view(request,id):
 	classes_joined = []
 	for student_info in student_classes:
 		classes_joined.append(student_info.class_room)
+
+	
 
 	classroom = ClassRoom.objects.get(id=id)
 	assignments = Assignment.objects.filter(class_room = id)
@@ -160,10 +163,26 @@ def class_info_view(request,id):
 	return render(request,'classes/class_info.html',context)
 
 
-def student_work_view(request,class_id):
-	# classroom = Classroom.objects.get(class_id=id)
+def student_work_view(request,class_id,assignment_id):
+	class_room = ClassRoom.objects.get(id=class_id)
+	assignment = Assignment.objects.get(id=assignment_id)
+	submissions = assignment.submissions.all()
+	grade_form = GradeForm(request.POST or None)
+	print(submissions)
+	if request.method == 'POST':
+		if grade_form.is_valid():
+			grade = request.POST['grade']
+			submission_id = request.POST['submit-grade']
+			submission = Submission.objects.get(id=submission_id)
+			submission.grade = grade
+			submission.save()
+			messages.success(request,"Submission graded successfully")
+			notification = Notification.objects.create(user=request.user,class_room=class_room,assignment=assignment,title='New Grade')
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=class_id),
+		'assignment':get_object_or_404(Assignment, pk=assignment_id),
+		'submissions': submissions,
+		"grade_form": grade_form,
 	}
 	return render(request,'classes/student_work.html',context)
 
@@ -227,6 +246,7 @@ def s_assignment_detail_view(request,class_id,assignment_id):
 	
 	if Submission.objects.filter(user=request.user,assignment=assignment).exists():
 		s_submission = Submission.objects.get(user=request.user,assignment=assignment)
+		submission_form = SubmitAssignment(instance=s_submission)
 	else:
 		s_submission = ''
 
@@ -240,6 +260,13 @@ def s_assignment_detail_view(request,class_id,assignment_id):
 				instance.save()
 				messages.success(request, 'Assignment submitted successfully')
 				return redirect('s_class_info',id=class_id)
+		if 'resubmit_assignment' in request.POST:
+			submission_form = SubmitAssignment(request.POST,request.FILES,instance=s_submission)
+			if submission_form.is_valid():
+				submission_form.save()
+				s_submission.last_updated = datetime.datetime.now()
+				s_submission.save()
+				messages.success(request, 'Assignment edited successfully')
 
 	context = {
 		'assignment': assignment,
@@ -247,15 +274,3 @@ def s_assignment_detail_view(request,class_id,assignment_id):
 		's_submission' : s_submission,
 	}
 	return render(request,'classes/s_assignment_detail.html',context)
-
-# def submit_assignment_view(request,id,assignment_id):
-# 	if request.method == 'POST':
-# 		if 'submit_assignment' in request.POST:
-# 			submission_form = SubmitAssignment(request.POST,request.FILES)
-# 			if submission_form.is_valid():
-# 				instance = submission_form.save(commit=False)
-# 				instance.user = request.user
-# 				instance.assignment = Assignment.objects.get(id=assignment_id)
-# 				instance.save()
-# 				messages.success(request, 'Assignment Submitted successfully')
-# 				return redirect('s_class_info',id=id)

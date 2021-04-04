@@ -144,7 +144,7 @@
 						</div>
 						{% endfor %}
 						{% endif %}
-
+ 
                   	</div>
                   <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
                        <div class="pt-3"></div>
@@ -198,7 +198,7 @@
 														</div>
 														<!-- <img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
 														<b class=" font-size-sm" style="color:#8dd457">{{student.student.first_name}} {{student.student.last_name}} (Me)</b> -->
-														<span class="fa fa-clock-o " style="color:#8dd457">
+														<span class="fa fa-clock-o " style="color:#8dd457;font-size:small;">
 															Joined {{student.added_at|timesince}} ago
 														</span>
 														{% else %}
@@ -208,7 +208,7 @@
 														</div>
 														<!-- <img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
 														<b class="text-muted font-size-sm">{{student.student.first_name}} {{student.student.last_name}}</b> -->
-														<span class="fa fa-clock-o" style="color:#7bc5ed">
+														<span class="fa fa-clock-o" style="color:#7bc5ed;font-size:small;">
 															Joined {{student.added_at|timesince}} ago
 														</span>
 														

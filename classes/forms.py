@@ -60,4 +60,9 @@ class SubmitAssignment(ModelForm):
 	class Meta:
 		model = Submission
 		fields = ['file']
-		
+
+class GradeForm(forms.Form):
+    grade = forms.CharField()
+
+    class Meta:
+        fields = ['grade']

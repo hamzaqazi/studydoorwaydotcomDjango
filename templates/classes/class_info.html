@@ -259,7 +259,7 @@
 									</p>
 									<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
 									<hr style="border-top: 1px solid #8c8b8b;">
-									<a href="{% url 'student_work' class.id %}">Student Work</a>
+									<a href="{% url 'student_work' class.id assignment.id %}">Student Work</a>
 								</div>
 
 							  </div>
@@ -324,8 +324,10 @@
 											<div class="row">
 												<div class="col-md-12 ">
 													<a>
-														<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+														<div class="chip">
+															<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+															<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+														</div>
 													</a>
 												</div>
 											</div>
@@ -343,17 +345,21 @@
 									<h4>Students</h4>
 								</div>
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} student{{students.count|pluralize}} are enrolled in this course</h6>
 									
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for student in students %}
-											<div class="row">
+											<div class="row"  style="border-left:3px solid #F06529;margin-top:5px;">
 												<div class="col-md-12 ">
 													<a>
-														<hr style="border-top: 1px solid #F06529;">
-														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
+														<div class="chip">
+															<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+															<b class="text-muted font-size-sm">{{student.student.first_name}} {{student.student.last_name}}</b>
+														</div>
+														<span class="fa fa-clock-o" style="color:#7bc5ed;font-size:small;">
+															Joined {{student.added_at|naturaltime}}
+														</span>
 													</a>
 												</div>
 											</div>
@@ -362,7 +368,7 @@
 									</p>
 								</div>
 							</div>
-							<!-- End of Total Instructors Card  -->
+							<!-- End of Total Students Card  -->
                   </div>
                   <!-- Student Grades Section Start  -->
                   <div class="tab-pane fade" id="pop4" role="tabpanel" aria-labelledby="pop4-tab">

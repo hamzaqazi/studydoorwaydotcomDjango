@@ -1,16 +1,226 @@
 {% extends 'main.html' %}
 {% load static %}
+{% load filename %}
 
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static '/css/student_work.css' %}">
 <section style="margin-top:75px">
 	{% include 'side_panel.html' %}
-	<a href=""><h5 style="margin-left:50px"> {{class.class_name}}</h5></a>
-	<hr style="border-top: 1px solid #b6c2b9;margin-top:30px;">
-	<div class="container p-3">
-		student work is here 
+	<div class="container text-center">
+		<a href="{% url 'class_info' class.id %}"><h5> {{class.class_name}}</h5></a>
+		<h5>{{assignment.title}}</h5>
+		<h6>Total Points: {{assignment.points}}</h6>
 	</div>
+
+	<hr style="border-top: 1px solid #b6c2b9;margin-top:10px;">
+	<!-- <div class="row">
+		<div class="col-md-6">
+			<div class="mt-3 mb-4 float-left">
+				<div class="col-lg-12 mt-4 mt-lg-0">
+				    <div class="row">
+				      <div class="col-md-12">
+				        <div class="user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
+				          <table class="table manage-candidates-top mb-0">
+				            <thead>
+				              <tr>
+				                <th><span class="float-left" style="color:tomato"><i class="fa fa-users fa-2x" aria-hidden="true"></i></span>
+				                	<div class="container ml-4 mt-1">
+										<h6 style="margin-left:10px">Turned in Students</h6>
+									</div>
+								</th>
+				                <th class="action text-right">
+				                	<div class="container mt-1">
+										<h6>Action</h6>
+									</div>
+				                </th>
+				              </tr>
+				            </thead>
+				            <tbody>
+				              <tr class="candidates-list">
+				                <td class="title">
+				                  <div class="thumb">
+				                    <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="">
+				                  </div>
+				                  <div class="candidate-list-details">
+				                    <div class="candidate-list-info">
+				                      <div class="candidate-list-title">
+				                        <h5 class="mb-0"><a href="#">Nichole Haynes</a></h5>
+				                      </div>
+				                      <div class="candidate-list-option">
+				                        <ul class="list-unstyled">
+				                          <li><i class="fas fa-filter pr-1"></i>Information Technology</li>
+				                          <li><i class="fas fa-map-marker-alt pr-1"></i>Botchergate, Carlisle</li>
+				                        </ul>
+				                      </div>
+				                    </div>
+				                  </div>
+				                </td>
+				                <td>
+				                  <ul class="list-unstyled mb-0 d-flex justify-content-end">
+				                    <li><a href="#" class="text-primary" data-toggle="tooltip" title="" data-original-title="view"><i class="far fa-eye"></i></a></li>
+				                    <li><a href="#" class="text-info" data-toggle="tooltip" title="" data-original-title="Edit"><i class="fas fa-pencil-alt"></i></a></li>
+				                    <li><a href="#" class="text-danger" data-toggle="tooltip" title="" data-original-title="Delete"><i class="far fa-trash-alt"></i></a></li>
+				                  </ul>
+				                </td>
+				              </tr>
+				            </tbody>
+				          </table>
+				        </div>
+				      </div>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4 ml-4">
+			<div class="card mt-4">
+				<div class="card-header">
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+    <div class="row">
+        <div class="col-lg-4">
+          <div class="articles card">
+            <div class="card-close">
+              <div class="dropdown">
+                <button type="button" id="closeCard4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                <div aria-labelledby="closeCard4" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+              </div>
+            </div>
+            <div class="card-header d-flex align-items-center">
+              	<div class="container ml-1 mt-1">
+					<h6>Turned in Students <span class="badge badge-dark">{{submissions.count}}</span></h6>
+				</div>
+            </div>
+            <div class="card-body no-padding">
+            	{% for submission in submissions %}
+              <div class="item d-flex align-items-center">
+                <div class="image"><img src="{{submission.user.userprofile.profile_pic.url}}" alt="..." class="img-fluid rounded-circle"></div>
+                <div class="text"><a href="#">
+                    <h3 class="h5">{{submission.user}}</h3></a><small>Submitted at. {{submission.submitted_at}}</small></div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="articles card">
+            <div class="card-close">
+              <div class="dropdown">
+                <button type="button" id="closeCard4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                <div aria-labelledby="closeCard4" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+              </div>
+            </div>
+            <div class="card-header d-flex align-items-center">
+              	<div class="container ml-1 mt-1">
+					<h6>Students work</h6>
+				</div>
+            </div>
+            <div class="card-body no-padding">
+            	{% for submission in submissions %}
+              <div class="item d-flex align-items-center col-md-5">
+                <div class="image"><img src="{{submission.user.userprofile.profile_pic.url}}" alt="..." class="img-fluid rounded-circle">
+                </div>
+                <div class="text"><a href="#">
+                    <h3 class="h5">{{submission.user}}</h3></a><small>Submitted at. {{submission.submitted_at}}</small>
+                </div>
+              </div>
+              <div class="row">
+	            <div class="col-md-4">
+	            	<div class="card rounded p-1 " style="background-color:#ebdecc;font-size:small;">
+	            		<p class="text-center">
+						<span style="color:tomato"><i class="fas fa-file-alt fa-2x"></i></span>
+						<a href="{{ submission.file.url }}">Download File</a>
+						{{submission.file|getfilename}}
+						</p>
+	            	</div>
+	            </div>
+	            <div class="col-md-3">
+	            	<div class="card rounded p-1">
+	            		<h6>Points</h6>
+	            		{% if submission.grade != 'No grade yet' %}
+		                  <div class="row">
+		                  	<div class="col-md-6 text-center" style="font-size:22px;">{{ submission.grade }}/{{submission.assignment.points}}</div>
+		                  	<div class="col-md-6 text-center">
+		                  		<i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+		                  	</div>
+		                  </div>
+		                {% else %}
+		                  <div class="row">
+		                  	<div class="col-md-6 text-center">
+		                  	Not Graded
+		                    </div>
+		                  	<div class="col-md-6 text-center">
+		                  		<i class="fa fa-pencil fa-2x" aria-hidden="true" data-toggle="modal" data-target="#modal-{{submission.id}}"></i>
+		                  	</div>
+		                  </div>
+		                {% endif %}
+	            	</div>
+	            </div>
+	            
+	      	  </div>
+	      	  {% endfor %}
+            </div>
+          </div>
+        </div>
+        
+    </div>
+
+
+
+
+{% for submission in submissions %}
+    <div class="modal fade" id="modal-{{submission.id}}">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+		  
+		    <!-- Modal Header -->
+		    <div class="modal-header">
+		      <h4 class="modal-title">Grade Submission</h4>
+		      <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    </div>
+		    
+
+		    <form method="POST",action="", enctype="multipart/form-data">
+		    	<!-- Modal body -->
+			    <div class="modal-body">
+		    		{% csrf_token %}
+		      		{{grade_form.grade}}
+			    </div>
+			    
+			    <!-- Modal footer -->
+			    <div class="modal-footer">
+			      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+			      <button type="submit" class="btn btn-outline-success" name="submit-grade" value="{{submission.id}}">Save</button>
+			    </div>
+		    </form>
+		    
+		  </div>
+		</div>
+	</div>
+	{% endfor %}
+<!-- {% for submission in submissions %}
+      
+      <div id="modal-{{ submission.id }}" class="modal fade">
+        <div class="modal-content">
+          <h4>Grade Submission</h4>
+          <form method="POST" enctype="multipart/form-data" class="feedback-form">
+            {% csrf_token %}
+            {{ grade_form.grade }}
+            <button type="submit" name="submit-grade" value="{{ submission.id }}">
+              <i class="material-icons">send</i>
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endfor %} -->
+	
 </section>
+
+
 
 {% endblock %}
