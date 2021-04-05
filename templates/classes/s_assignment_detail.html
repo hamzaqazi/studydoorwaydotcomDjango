@@ -39,21 +39,20 @@
 			<div class="card rounded">
 				<div class="card-body">
 					<h5 class="card-title text-muted">Your Work
-						{% if s_submission.grade != 'No grade yet' %}<span class="float-right">{{s_submission.grade}}/{{s_submission.assignment.points}}</span>
-						{% else %}<span class="float-right">Not Graded</span>{% endif %}
+						{% if s_submission.grade != 'No grade yet' %}<span class="float-right">{{s_submission.grade}}/{{assignment.points}}</span>
+						{% else %}<span class="float-right">-/{{assignment.points}}</span>{% endif %}
 					</h5>
 					{% if s_submission %}
-					<div class="card rounded p-1 m-1">
+					<div class="card rounded m-1">
 						<p class="float-left">
-						<span style="color:tomato"><i class="fas fa-file-alt fa-2x"></i></span>
-						<a href="{{ s_submission.file.url }}">{{s_submission.file|getfilename}}</a>
+						<span style="color:tomato"><i class="fas fa-file-alt fa-2x pull-left"></i></span>
+						<a href="{{ s_submission.file.url }}"><small>{{s_submission.file|getfilename}}</small></a>
 						</p>
-						<p class="text-muted" style="font-size:small;">Submitted at . {{s_submission.submitted_at|date:"d M, Y"}}</p>
+					</div>
+					<p class="text-secondary" style="font-size:small;">Submitted at . {{s_submission.submitted_at|date:"d M, Y"}}</p>
 						{% if s_submission.last_updated %}
 						<p class="text-muted" style="font-size:small;">Last updated . {{s_submission.last_updated|naturaltime}}</p>
 						{% endif %}
-
-					</div>
 					<div class="card rounded p-1">
 						<button class="btn btn-outline-primary btn-block" type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i>Add or create</button>
 						<div class="dropdown-menu" aria-labelledby="dropDownMenuButton">
@@ -62,7 +61,6 @@
 						    	<form method="POST",action="", enctype="multipart/form-data">
 						    		{% csrf_token %}
 						      		{{submission_form|crispy}}
-								
 							</a>
 						</div>
 						<div class="text-center m-2 p-2">
@@ -81,7 +79,6 @@
 						    	<form method="POST",action="", enctype="multipart/form-data">
 						    		{% csrf_token %}
 						      		{{submission_form|crispy}}
-								
 							</a>
 						</div>
 						<div class="text-center m-2 p-2">
@@ -91,6 +88,18 @@
 				      		</form>
 					    </div>
 					</div>
+					{% endif %}
+				</div>
+			</div>
+			<div class="card rounded m-1">
+				<div class="card-body">
+					<h6 class="card-title">Feedback</h6>
+					{% if s_submission.feedback != 'No feedback yet'%}
+					<div class="card-text text-secondary">	
+						<small>{{s_submission.feedback}}</small>
+					</div>
+					{% else %}
+					<h6 class="card=title text-center text-muted"><small>No feedback yet.</small></h6>
 					{% endif %}
 				</div>
 			</div>

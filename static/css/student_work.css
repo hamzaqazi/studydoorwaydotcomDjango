@@ -20,9 +20,9 @@ body{
     padding: 20px
 }
 
-.articles .item:nth-of-type(even) {
+/*.articles .item:nth-of-type(even) {
     background: #fafafa
-}
+}*/
 
 .articles .item .image {
     min-width: 50px;
@@ -88,6 +88,6 @@ body{
 }
 
 
-
-/*students enter grades Section CSS*/
-
+#edit-pencil:hover{
+    color:tomato;
+}

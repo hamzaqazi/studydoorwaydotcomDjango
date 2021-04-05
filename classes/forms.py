@@ -62,7 +62,13 @@ class SubmitAssignment(ModelForm):
 		fields = ['file']
 
 class GradeForm(forms.Form):
-    grade = forms.CharField()
+    grade = forms.CharField(help_text='Enter points obtained')
 
     class Meta:
         fields = ['grade']
+
+class FeedbackForm(forms.Form):
+    feedback = forms.CharField(help_text='Enter your feedback')
+    
+    class Meta:
+        fields = ['feedback']

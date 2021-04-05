@@ -167,22 +167,40 @@ def student_work_view(request,class_id,assignment_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	assignment = Assignment.objects.get(id=assignment_id)
 	submissions = assignment.submissions.all()
+	ungraded_sub = assignment.submissions.filter(grade='No grade yet').count()
 	grade_form = GradeForm(request.POST or None)
+	feedback_form = FeedbackForm(request.POST or None)
 	print(submissions)
 	if request.method == 'POST':
-		if grade_form.is_valid():
-			grade = request.POST['grade']
-			submission_id = request.POST['submit-grade']
-			submission = Submission.objects.get(id=submission_id)
-			submission.grade = grade
-			submission.save()
-			messages.success(request,"Submission graded successfully")
-			notification = Notification.objects.create(user=request.user,class_room=class_room,assignment=assignment,title='New Grade')
+		if 'submit-feedback' in request.POST:
+			if feedback_form.is_valid():
+				feedback = request.POST['feedback']
+				submission_id = request.POST['submit-feedback']
+				submission = Submission.objects.get(id=submission_id)
+				submission.feedback = feedback
+				submission.save()
+				messages.success(request,'Feedback added successfully for '+submission.user.username)
+				notification = Notification.objects.create(user=request.user,class_room=class_room,assignment=assignment,title='New Feedback')
+		if 'submit-grade' in request.POST:
+			if grade_form.is_valid():
+				grade = request.POST['grade']
+				if grade > assignment.points:
+					messages.warning(request,'Max points for this assignment is '+assignment.points)
+				else:
+					submission_id = request.POST['submit-grade']
+					submission = Submission.objects.get(id=submission_id)
+					submission.grade = grade
+					submission.save()
+					messages.success(request,"Submission graded successfully for "+submission.user.username)
+					notification = Notification.objects.create(user=request.user,class_room=class_room,assignment=assignment,title='New Grade')
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=class_id),
 		'assignment':get_object_or_404(Assignment, pk=assignment_id),
 		'submissions': submissions,
 		"grade_form": grade_form,
+		'feedback_form': feedback_form,
+		'ungraded_sub':ungraded_sub,
+		
 	}
 	return render(request,'classes/student_work.html',context)
 
