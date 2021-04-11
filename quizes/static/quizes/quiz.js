@@ -2,7 +2,7 @@ console.log("hello Quiz.js")
 
 const url = window.location.href
 const quizBox = document.getElementById('quiz-box')
-
+console.log(url)
 const scoreBox = document.getElementById('score-box')
 const resultBox = document.getElementById('result-box')
 

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
 	path('classes/create_class/',views.create_class_view,name='create_class'),
 	path('classes/class_info/<int:id>/',views.class_info_view,name='class_info'),

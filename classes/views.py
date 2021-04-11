@@ -67,6 +67,8 @@ def create_class_view(request):
 
 @login_required
 def announcement_likes_view(request,pk,class_id):
+	student = request.user
+	class_room = ClassRoom.objects.get(id=class_id)
 	announcement = get_object_or_404(Announcement, id=request.POST.get('announcement_id'))
 	
 	if announcement.likes.filter(id=request.user.id).exists():
@@ -74,14 +76,23 @@ def announcement_likes_view(request,pk,class_id):
 	else:	
 		announcement.likes.add(request.user)
 
+	if Student.objects.filter(student=student,class_room=class_room).exists():
+		return HttpResponseRedirect(reverse('s_class_info', args=[str(class_id)]))
+
+
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
 
 def announcement_comments_view(request,announcement_id,class_id):
+	student = request.user
+	class_room = ClassRoom.objects.get(id=class_id) 
 	announcement = Announcement.objects.get(id=announcement_id)
 	if request.method == 'POST':
 		comment_text = request.POST.get('comment_text')
 		Comment.objects.create(user=request.user,announcement=announcement,comment_text=comment_text)
+
+		if Student.objects.filter(student=student,class_room=class_room).exists():
+			return HttpResponseRedirect(reverse('s_class_info', args=[str(class_id)]))		
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
 @login_required
@@ -99,7 +110,7 @@ def class_info_view(request,id):
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
-	quizes = Quiz.objects.all()
+	quizes = Quiz.objects.filter(class_room=classroom)
 
 
 	create_class_form = CreateClassRoom(instance=classroom)
@@ -210,12 +221,17 @@ def s_class_info_view(request,id):
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room= id)
 	instructors = Instructor.objects.filter(class_room= id)
+	class_room = ClassRoom.objects.get(id=id)
+	announcements = class_room.announcements.all().order_by('-announcement_date')
+	quizes = Quiz.objects.filter(class_room=class_room)
 
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=id),
 		'assignments':assignments,
+		'quizes':quizes,
 		'instructors':instructors,
 		'students':students,
+		'announcements':announcements,
 	}
 	return render(request, 'classes/s_class_info.html',context)
 

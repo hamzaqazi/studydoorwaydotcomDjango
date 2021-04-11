@@ -52,13 +52,16 @@
 					    	</div>
 					    	<div class="container">
 		                      	<div class="row">
-						    		<div class="col-sm-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;overflow: auto;height:200px;">
+						    		<div class="col-sm-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;overflow: auto;height:300px;">
+						    			<h6 class="card-title p-1 m-1">Upcoming</h6>
 						    			{% if assignments %}
 						    			{% for assignment in assignments %}
-						    			<a href="">{{assignment.title}}</a>
+						    			<div class="card p-1 m-1">
+						    				<a href="{% url 'student_work' class.id assignment.id %}">{{assignment.title}}</a><span class="badge badge-info">{{assignment.submissions.count}}</span>
+						    			</div> 
 						    			{% endfor %}
 						    			{% else %}
-						    			<p>You didn't assign any work yet</p>
+						    			<small class="text-center text-muted m-2 p-2">No work due soon.</small>
 						    			{% endif %}
 						    		</div>
 						    		<div class="col rounded" style="margin-top:20px">
@@ -165,17 +168,16 @@
 												  	{% else %}
 												  	{% for comment in announcement.comments.all %}
 												  	  <div class="bg-white p-2" style="margin-left:15px;">
-													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
+													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{comment.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
 													          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{comment.user.first_name}}</span><span class="date text-black-50">Commented - {{comment.comment_date|timesince}} ago</span></div>
 													      </div>
-													      <div class="mt-2">
-													          <p class="comment-text">{{comment.comment_text}}</p>
+													      <div class="mt-2 rounded" style="background-color:#f5f0f0">
+													          <p class="comment-text p-1 m-1">{{comment.comment_text}}</p>
 													      </div>
 													  </div>
 													  <hr style="border-top: 1px solid #d1c7c7;">
 													  {% endfor %}
 													  {% endif %}
-													  <hr style="border-top: 1px solid #d1c7c7;">
 
 													  <form method="POST" action="{% url 'announcement_comments' announcement.id class.id %}">
 													  	{% csrf_token %}

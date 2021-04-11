@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'classes.apps.ClassesConfig',
     'crispy_forms',
+    'materializeform',
     'phonenumber_field',
     'internetforum',
     'ckeditor',

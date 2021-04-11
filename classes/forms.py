@@ -55,6 +55,7 @@ class CreateQuiz(ModelForm):
 	class Meta:
 		model = Quiz
 		fields = '__all__'
+		exclude = ['created_by','class_room']
 		
 class SubmitAssignment(ModelForm):
 	class Meta:

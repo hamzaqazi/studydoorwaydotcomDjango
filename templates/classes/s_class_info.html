@@ -10,8 +10,8 @@
 
 <link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static '/css/s_class_info.css' %}">
-
-<div class="container" style="margin-top:70px">
+<script src="{% static 'quizes/quizes_main.js' %}" defer></script>
+<div class="container" style="margin-top:75px">
         <div class="row">
             <div class="col-md-12 ">
                 <nav class="nav-justified ">
@@ -38,15 +38,17 @@
 					                        <p class="card-text" style="text-align:left;">last updated<i class="fa fa-clock-o" aria-hidden="true"></i>{{class.last_updated|timesince}} ago</p>
 					                        <hr style="border-top: 1px solid #F06529;">
 					                        <p class="">This class has been created by <b>{{class.user.first_name}}</b> on <strong>{{class.date_created}}</strong></p>
-					                        
-					                       <!--  <div class="icon-block"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"> <i class="fa fa-twitter"></i></a><a href="#"> <i class="fa fa-google-plus"></i></a></div> -->
 					                    </div>
 					                </div>
 					    		</div>						    		
 					    	</div>
+
+
+
 					    	<div class="container">
 		                      	<div class="row" >
-						    		<div class="col-md-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;">
+						    		<div class="col-md-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;overflow: auto;height:300px;">
+						    			<h6 class="card-title p-1 m-1">Upcoming</h6>
 						    			{% if assignments %}
 						    			{% for assignment in assignments%}
 						    			<div class="card border-0">
@@ -70,22 +72,94 @@
 						    			<p class="text-muted mt-3" style="font-size:small;text-align:center">Wohoo! No Work</p>
 						    			{% endif %}
 						    		</div>
-						    		<div class="col rounded" style="margin-top:20px">
-						    			<div class="row rounded" id="cardshadow" >
-						    				<div class="col rounded">
-						    					<div class="chip">
-												  <img src="{% static 'images/nav logo.png' %}" alt="Person" width="96" height="96">
-												  <b data-toggle="collapse" data-target="#collapseAnnounce" aria-expanded="false"aria-controls="collapseAnnounce">Announce something to your class</b>
-												</div>
+						    		<div class="col rounded">
+						    			
 
-							    				<div id="collapseAnnounce" class="collapse">
-													<p class="card-text">Class Created :</p>
-													<p class="card-text">Section :</p>
-													<p class="card-text">Subject :</p>
-													<hr style="border-top: 1px solid #8c8b8b;">
+						    				{% if announcements %}
+						    			{% for announcement in announcements %}
+						    			<div class="row rounded" style="margin-top:20px" id="cardshadow">
+						    				<div class="col rounded">
+						    					
+						    					<div class="d-flex flex-column comment-section" id="myGroup">
+												  <div class="bg-white p-2">
+												      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40">
+												          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{announcement.user.first_name}}</span><span class="date text-black-50">Shared publicly - {{announcement.announcement_date|timesince}} ago</span></div>
+												      </div>
+												      <div class="mt-2">
+												          <p class="comment-text">{{announcement.announcement_text}}</p>
+												      </div>
+												      {% if announcement.announcement_file %}
+
+												      <div class="mt-2 rounded" style="width:25%;overflow:hidden" id="cardshadow">
+												      	<div class="col">
+												      		<a href="{{ announcement.announcement_file.url }}" download>
+																<img  src="{% static 'images/files_image.png' %}" widht="40" height="40" alt="Download File">	
+															</a>
+															<a href="{{ announcement.announcement_file.url }}" download>
+																<b style="margin-top:20px;margin-left:20px;font-size:13px">Download Files</b>
+															</a>
+												      	</div>	
+												      	
+												      </div>
+												      {% endif %}
+												  </div>
+												  <div class="bg-white p-2" style="border-top: 1px solid #F06529">
+												      <div class="d-flex flex-row fs-12">
+												      	<form action="{% url 'announcement_likes' announcement.id class.id %}" method="POST" novalidate>
+												      		{% csrf_token %}
+												          <div class="like p-2 cursor">
+												          	{% if request.user not in announcement.likes.all %}
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">like</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	</button>
+												          	{% else %}
+												          	<button style="background-color: Transparent;" type="submit" name="announcement_id" value="{{ announcement.id }}" class="border-0"><i class="fa fa-thumbs-o-up" ></i><span class="ml-1">Unlike</span> <span class="badge badge-pill badge-info">{{announcement.total_likes}}</span>
+												          	</button> 
+												          	{% endif %}
+
+												          </div>
+												        </form>
+												          <div class="like p-2 cursor action-collapse" data-toggle="collapse" aria-expanded="true" aria-controls="collapse-1{{announcement.id}}" href="#collapse-1{{announcement.id}}"><i class="far fa-comment-dots"></i><span class="ml-1">Comment</span> <span class="badge badge-pill badge-info">{{announcement.comments.all.count}}</span></div>
+												      </div>
+												  </div>
+												  <div id="collapse-1{{announcement.id}}" class="collapse" style="margin-bottom:10px;border-top:1px solid #F06529" data-parent="#myGroup">
+
+												  	{% if not announcement.comments.all %}
+												  	<div class="bg-white p-2 text-center">
+												  		<p>No Comments yet ... Add one </p>
+												  	</div>
+												  	{% else %}
+												  	{% for comment in announcement.comments.all %}
+												  	  <div class="bg-white p-2" style="margin-left:15px;">
+													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{comment.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
+													          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{comment.user.first_name}}</span><span class="date text-black-50">Commented - {{comment.comment_date|timesince}} ago</span></div>
+													      </div>
+													      <div class="mt-2 rounded" style="background-color:#f5f0f0">
+													          <p class="comment-text p-1 m-1">{{comment.comment_text}}</p>
+													      </div>
+													  </div>
+													  <hr style="border-top: 1px solid #d1c7c7;">
+													  {% endfor %}
+													  {% endif %}
+
+													  <form method="POST" action="{% url 'announcement_comments' announcement.id class.id %}">
+													  	{% csrf_token %}
+												      <div class="d-flex flex-row align-items-start" style="margin-left:25px;"><img class="rounded-circle" src="{{request.user.userprofile.profile_pic.url}}" width="40"><textarea class="form-control ml-1 shadow-none textarea" name="comment_text" required></textarea></div>
+												      <div class="mt-2 text-right"><button class="btn btn-primary btn-sm shadow-none" type="submit">Post comment <i class="fa fa-paper-plane"></i></button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
+												      </div>
+												  	  </form>
+												  </div>
 												</div>
-											</div>
+						    				</div>
 						    			</div>
+						    			{% endfor %}
+						    			{% endif %}
+
+
+
+						    		
+						    				
+
+
 						    		</div>
 							    </div>
 							</div>
@@ -144,8 +218,35 @@
 						</div>
 						{% endfor %}
 						{% endif %}
+
+						
+						<div class="card border-0 mb-3" style="max-width: 60rem">
+							<div class=card-header><h6>Quizes</h6></div>
+							<div class="card-body text-dark">
+						    	<!-- <a href="{% url 'quizes:main-view' %}">Quizes List</a> -->
+						    	<h6 class="card-title">Quizes List</h6>
+						    	{% if quizes %}
+								{% for quiz in quizes %}
+						    	<button
+									class="btn btn-link modal-button"
+									data-pk="{{quiz.pk}}"
+									data-quiz="{{quiz.name}}"
+									data-questions="{{quiz.number_of_questions}}"
+									data-difficulty="{{quiz.difficulty}}"
+									data-time="{{quiz.time}}"
+									data-pass="{{quiz.required_score_to_pass}}"
+									data-class_id="{{quiz.class_room.id}}"
+									data-toggle="modal"
+									data-target="#quizStartModal">
+
+									{{quiz.name}}
+								</button>
+								{% endfor %}
+								{% endif %}
+							</div>
+						</div>
  
-                  	</div>
+                  </div>
                   <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
                        <div class="pt-3"></div>
 							<div class="card border-0">
@@ -165,8 +266,7 @@
 														  <img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Person" width="96" height="96">
 														  <b>{{instructor.instructor.first_name}} {{instructor.instructor.last_name}}</b>
 														</div>
-														<!-- <img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b> -->
+														
 													</a>
 												</div>
 											</div>
@@ -229,7 +329,23 @@
             </div>
         </div>
     </div>
+    <!-- Start Quiz modal -->
+    <div class="modal fade" id="quizStartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Start Quiz ?</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body" id="modal-body-confirm"></div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+	        <button type="button" id="start-button" class="btn btn-success">Yes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
-
-
-{% endblock %}
+{% endblock content %}

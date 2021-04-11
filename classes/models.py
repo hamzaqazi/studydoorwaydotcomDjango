@@ -29,7 +29,7 @@ class Announcement(models.Model):
 	user = models.ForeignKey(User,null=False,on_delete=models.CASCADE)
 	announcement_text = models.TextField(max_length=500)
 	announcement_file = models.FileField(blank=True,upload_to='files/announcement_file/')
-	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
+	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE,related_name='announcements')
 	announcement_date = models.DateTimeField(auto_now_add=True)
 	likes = models.ManyToManyField(User, related_name = 'announcement_likes')
 
@@ -80,7 +80,7 @@ class Assignment(models.Model):
 		('80','80'),
 		('90','90'),
 		('100','100'),
-		)
+	)
 	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	title = models.CharField(max_length=100)
 	instruction = models.TextField(max_length=500,null=True,blank=True)
