@@ -5,6 +5,7 @@ const modalBody = document.getElementById('modal-body-confirm')
 const startBtn = document.getElementById('start-button')
 
 const url = window.location.href
+console.log(url)
 
 modalBtns.forEach(modalBtn=>modalBtn.addEventListener('click', ()=>{
 	const pk = modalBtn.getAttribute('data-pk')
@@ -13,6 +14,7 @@ modalBtns.forEach(modalBtn=>modalBtn.addEventListener('click', ()=>{
 	const difficulty = modalBtn.getAttribute('data-difficulty')
 	const scoreToPass = modalBtn.getAttribute('data-pass')
 	const time = modalBtn.getAttribute('data-time')
+	const classId = modalBtn.getAttribute('data-class_id')
 
 	modalBody.innerHTML = `
 		<div class="h5 mb-3">Are you sure you want to Start <b>${name}</b> ?</div>
@@ -25,9 +27,10 @@ modalBtns.forEach(modalBtn=>modalBtn.addEventListener('click', ()=>{
 			</ul>
 		</div>
 	`
-
-	startBtn.addEventListener('click', () => {
-		window.location.href = url + pk
-	})
 	console.log(pk)
+	startBtn.addEventListener('click', () => {
+		window.location.href = url + pk 
+
+	})
+	
 }))

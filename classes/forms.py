@@ -48,9 +48,6 @@ class JoinClassRoom(forms.Form):
 class CreateAnnouncement(ModelForm):
 	class Meta:
 		model = Announcement
-		# widgets = {
-		# 	'announcement_text':forms.Textarea(attrs={'rows':3,'cols':15})
-		# }
 		fields = '__all__'
 
 
@@ -58,4 +55,21 @@ class CreateQuiz(ModelForm):
 	class Meta:
 		model = Quiz
 		fields = '__all__'
+		exclude = ['created_by','class_room']
 		
+class SubmitAssignment(ModelForm):
+	class Meta:
+		model = Submission
+		fields = ['file']
+
+class GradeForm(forms.Form):
+    grade = forms.CharField(help_text='Enter points obtained')
+
+    class Meta:
+        fields = ['grade']
+
+class FeedbackForm(forms.Form):
+    feedback = forms.CharField(help_text='Enter your feedback')
+    
+    class Meta:
+        fields = ['feedback']

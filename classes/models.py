@@ -30,7 +30,7 @@ class Announcement(models.Model):
 	user = models.ForeignKey(User,null=False,on_delete=models.CASCADE)
 	announcement_text = models.TextField(max_length=500)
 	announcement_file = models.FileField(blank=True,upload_to='files/announcement_file/')
-	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
+	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE,related_name='announcements')
 	announcement_date = models.DateTimeField(auto_now_add=True)
 	likes = models.ManyToManyField(User, related_name = 'announcement_likes')
 
@@ -81,14 +81,14 @@ class Assignment(models.Model):
 		('80','80'),
 		('90','90'),
 		('100','100'),
-		)
+	)
 	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	title = models.CharField(max_length=100)
 	instruction = models.TextField(max_length=500,null=True,blank=True)
 	file = models.FileField(blank=True,upload_to='files/t_assignments/')
 	points = models.CharField(max_length=100, null=True, choices=POINTS, default=100)
 	due_date = models.DateTimeField()
-	assigning_date = models.DateField(auto_now_add=True)
+	assigning_date = models.DateTimeField(auto_now_add=True)
 	last_updated = models.DateTimeField(auto_now=True)
 	user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='assignments')
 
@@ -99,10 +99,10 @@ class Assignment(models.Model):
 
 class Submission(models.Model):
 	file = models.FileField(upload_to='files/s_submissions/')
-	submitted_at = models.DateField(auto_now=True)
-	last_updated = models.DateField(auto_now=True)
-	assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+	submitted_at = models.DateTimeField(auto_now=True)
+	last_updated = models.DateTimeField(null=True)
+	assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE,related_name='submissions')
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	grade = models.CharField(max_length=100, blank=True, null=True, default='No grade yet')
 	feedback = models.CharField(max_length=100, blank=True, null=True, default='No feedback yet')
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from classes.models import ClassRoom
 from .models import Quiz
 from django.views.generic import ListView
 from django.http import JsonResponse
@@ -7,6 +7,9 @@ from questions.models import Question,Answer
 from results.models import Result
 
 class QuizListView(ListView):
+	# class_room = ClassRoom.objects.get(id=class_id)
+	# quizes = Quiz.objects.filter(class_room=class_room)
+	# return render(request,'quizes/quizes_main.html',{'quizes':quizes})
 	model = Quiz
 	template_name = 'quizes/quizes_main.html'
 

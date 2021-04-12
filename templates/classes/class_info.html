@@ -52,13 +52,16 @@
 					    	</div>
 					    	<div class="container">
 		                      	<div class="row">
-						    		<div class="col-sm-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;overflow: auto;height:200px;">
+						    		<div class="col-sm-2 rounded" id="cardshadow" style="margin-top:20px;margin-right:20px;overflow: auto;height:300px;">
+						    			<h6 class="card-title p-1 m-1">Upcoming</h6>
 						    			{% if assignments %}
 						    			{% for assignment in assignments %}
-						    			<a href="">{{assignment.title}}</a>
+						    			<div class="card p-1 m-1">
+						    				<a href="{% url 'student_work' class.id assignment.id %}">{{assignment.title}}</a><span class="badge badge-info">{{assignment.submissions.count}}</span>
+						    			</div> 
 						    			{% endfor %}
 						    			{% else %}
-						    			<p>You didn't assign any work yet</p>
+						    			<small class="text-center text-muted m-2 p-2">No work due soon.</small>
 						    			{% endif %}
 						    		</div>
 						    		<div class="col rounded" style="margin-top:20px">
@@ -165,17 +168,16 @@
 												  	{% else %}
 												  	{% for comment in announcement.comments.all %}
 												  	  <div class="bg-white p-2" style="margin-left:15px;">
-													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
+													      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{comment.user.userprofile.profile_pic.url}}" width="40" style="border:1px solid #F06529">
 													          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{comment.user.first_name}}</span><span class="date text-black-50">Commented - {{comment.comment_date|timesince}} ago</span></div>
 													      </div>
-													      <div class="mt-2">
-													          <p class="comment-text">{{comment.comment_text}}</p>
+													      <div class="mt-2 rounded" style="background-color:#f5f0f0">
+													          <p class="comment-text p-1 m-1">{{comment.comment_text}}</p>
 													      </div>
 													  </div>
 													  <hr style="border-top: 1px solid #d1c7c7;">
 													  {% endfor %}
 													  {% endif %}
-													  <hr style="border-top: 1px solid #d1c7c7;">
 
 													  <form method="POST" action="{% url 'announcement_comments' announcement.id class.id %}">
 													  	{% csrf_token %}
@@ -259,7 +261,7 @@
 									</p>
 									<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
 									<hr style="border-top: 1px solid #8c8b8b;">
-									<a href="{% url 'student_work' class.id %}">Student Work</a>
+									<a href="{% url 'student_work' class.id assignment.id %}">Student Work</a>
 								</div>
 
 							  </div>
@@ -324,8 +326,10 @@
 											<div class="row">
 												<div class="col-md-12 ">
 													<a>
-														<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+														<div class="chip">
+															<img src="{{instructor.instructor.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+															<b class="text-muted font-size-sm">{{instructor.instructor.first_name}}</b>
+														</div>
 													</a>
 												</div>
 											</div>
@@ -343,17 +347,21 @@
 									<h4>Students</h4>
 								</div>
 								<div class="card-body">
-									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} students are enrolled in this course</h6>
+									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} student{{students.count|pluralize}} are enrolled in this course</h6>
 									
 									<p class="card-text">
 										<div class="avatar-group">
 											{% for student in students %}
-											<div class="row">
+											<div class="row"  style="border-left:3px solid #F06529;margin-top:5px;">
 												<div class="col-md-12 ">
 													<a>
-														<hr style="border-top: 1px solid #F06529;">
-														<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
-														<b class="text-muted font-size-sm">{{student.student.first_name}}</b>
+														<div class="chip">
+															<img src="{{student.student.userprofile.profile_pic.url}}" alt="Avatar" class="md-avatar rounded-circle">
+															<b class="text-muted font-size-sm">{{student.student.first_name}} {{student.student.last_name}}</b>
+														</div>
+														<span class="fa fa-clock-o" style="color:#7bc5ed;font-size:small;">
+															Joined {{student.added_at|naturaltime}}
+														</span>
 													</a>
 												</div>
 											</div>
@@ -362,7 +370,7 @@
 									</p>
 								</div>
 							</div>
-							<!-- End of Total Instructors Card  -->
+							<!-- End of Total Students Card  -->
                   </div>
                   <!-- Student Grades Section Start  -->
                   <div class="tab-pane fade" id="pop4" role="tabpanel" aria-labelledby="pop4-tab">

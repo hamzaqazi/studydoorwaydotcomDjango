@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
-
+{% load materialize %}
 
 {% block content %}
 
@@ -282,8 +282,8 @@
 					</div>
 					<div class="collapse mb-2" id="collapsee{{class.id}}">
 						<ul class="list-group list-group-flush">
-						  <li class="list-group-item list-group-item-secondary"> {{n.user}} uploaded {{n.title}} 
-						  	<a href="{% url 'delete_notification' n.id %}">Mark as Read</a>
+						  <li class="list-group-item list-group-item-secondary"> from {{n.user}}. {{n.title}} <a href="{% url 's_assignment_detail' n.class_room.id n.assignment.id %}">{{n.assignment}}</a> 
+						  	<a href="{% url 'delete_notification' n.id %}"> (Mark as Read)</a>
 						  </li>
 						</ul>
 						{% endfor %}
@@ -314,4 +314,4 @@
 	  document.getElementById("myBar").style.width = scrolled + "%";
 	}
 </script> -->
-{% endblock %}
+{% endblock content %}

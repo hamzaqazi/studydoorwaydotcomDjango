@@ -1,5 +1,7 @@
 from django.db import models
 import random
+from classes.models import ClassRoom
+from django.contrib.auth.models import User
 
 
 DIFF_CHOICES = (
@@ -13,7 +15,9 @@ DIFF_CHOICES = (
 class Quiz(models.Model):
 	name = models.CharField(max_length=120)
 	topic = models.CharField(max_length=120)
+	created_by = models.ForeignKey(User,null=True,on_delete=models.CASCADE)
 	number_of_questions = models.IntegerField()
+	class_room = models.ForeignKey(ClassRoom,null=True,on_delete=models.CASCADE)
 	time = models.IntegerField(help_text="Duration of the quiz in minutes")
 	required_score_to_pass = models.IntegerField(help_text="Required score in %")
 	difficulty = models.CharField(max_length=6,choices=DIFF_CHOICES)
