@@ -21,13 +21,6 @@ def course_chat_room(request,id):
 	return render(request, 'chat/room.html',{'course':course})
   
 
-# @api_view(['GET'])
-# def getMessages(request):
-#     if request.method == 'GET':
-#         messages = Message.objects.all()
-#         serializer = MessageSerializer(messages, many=True)
-#         return Response(serializer.data)
-#  
 class getMessages(viewsets.ModelViewSet):
 	queryset=Message.objects.all()
 	serializer_class=MessageSerializer

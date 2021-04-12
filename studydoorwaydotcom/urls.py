@@ -30,7 +30,7 @@ from accounts.views import (
 )
 router=routers.DefaultRouter()
 router.register(r'ajaxusers',getMessages)
-print(router)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

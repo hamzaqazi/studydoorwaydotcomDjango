@@ -7,7 +7,7 @@ class MessageSerializer(serializers.ModelSerializer):
 	author = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
 	class Meta:
 		model=	Message
-		fields = ('content','timestamp','author')
+		fields = ('content','timestamp','author','class_room')
 
 
 

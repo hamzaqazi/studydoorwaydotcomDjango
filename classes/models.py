@@ -21,6 +21,7 @@ class ClassRoom(models.Model):
 	subject = models.CharField(max_length= 250,null=True)
 	title_image = models.ImageField(null=True,blank=True,default='classTitle image.jpg',upload_to='classTitleImages/')
 
+	
 	def __str__(self):
 		return self.class_name
 

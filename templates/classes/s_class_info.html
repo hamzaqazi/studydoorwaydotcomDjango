@@ -185,7 +185,12 @@
 
 							<div class="card border-0">
 								<div class="card-header">
-									<h4>Students</h4>
+									<h4>Students
+										<span class="float-right" style="color:tomato">
+    									<a href="{% url 'chat:course_chat_room' class.id %}" }>Student Chat </a> <i class="fa fa-comment-o"></i>
+										</span> 
+									</h4>
+									
 								</div>
 								<div class="card-body">
 									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} student{{students.count|pluralize}} are enrolled in this course</h6>
@@ -254,13 +259,6 @@
 </style>
 
 
-<div class="container">
-  <div class="vertical-center">
-  	<br>
-  	<br>
-    <a href="{% url 'chat:course_chat_room' class.id %}" }> Student Chat </a>
-  </div>
-</div>
 
 
     <!-- The Submit Assignment Modal -->
@@ -291,63 +289,5 @@
 	  </div>
 	</div>
 </div>
-<!-- <script type="text/javascript">
-	console.log("hello s_class_info.html")
-	const assignmentBox = document.getElementById("assignment-box")
-	const countdownBox = document.getElementById("countdown-box")
-	const dueDate = Date.parse(assignmentBox.textContent)
-setInterval(()=>{
-	const now = new Date().getTime()
 
-	const diff = dueDate-now
-
-	const d = Math.floor(dueDate / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
-	const h = Math.floor((dueDate / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
-	const m = Math.floor((dueDate / (1000 * 60) - (now / (1000 * 60))) % 60)
-	const s = Math.floor((dueDate / (1000) - (now / (1000))) % 60)
-	console.log(s)
-	if (diff>0) {
-		countdownBox.innerHTML = `<small> ${d} days, ${h}:${m}:${s}</small>`
-	}
-},1000)
-
-
-</script> -->
-<!-- <script type="text/javascript">
-	console.log("hello! s_class_info.html")
-	$('[data-countdown]').each(function(){
-		var $deadline = new Date($(this).data('countdown')).getTime();
-		// $deadline = (Date.parse($deadline)/1000);
-		console.log($deadline)
-		
-		var $dataDays = $(this).children('[data-days]');
-		var $dataHours = $(this).children('[data-hours]');
-		var $dataMinuts = $(this).children('[data-minuts]');
-		var $dataSeconds = $(this).children('[data-seconds]');
-		// console.log($deadline)
-
-		var x = setInterval(function(){
-			var now = new Date().getTime();
-			var t = $deadline - now;
-
-			const days = Math.floor($deadline / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
-			// const hours = Math.floor(($deadline / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
-			// const minuts = Math.floor(($deadline / (1000 * 60) - (now / (1000 * 60))) % 60)
-			// const seconds = Math.floor(($deadline / (1000) - (now / (1000))) % 60)
-			// var days = Math.floor(t/(1000*60*60*24));
-			
-			var hours = Math.floor(t%(1000 * 60 * 60 * 24)/(1000 * 60 * 60));
-			var minuts = Math.floor(t%(1000 * 60 * 60)/(1000 * 60));
-			var seconds = Math.floor(t%(1000 * 60)/(1000));
-			// console.log(days)
-			$dataDays.html(days);
-			$dataHours.html(hours);
-			$dataMinuts.html(minuts);
-			$dataSeconds.html(seconds);
-
-		},1000)
-		// console.log($(this).data('countdown'))
-		// console.log($deadline)
-	})
-</script> -->
 {% endblock %}
