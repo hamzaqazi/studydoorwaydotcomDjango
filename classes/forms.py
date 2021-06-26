@@ -106,3 +106,8 @@ class AttendanceForm(ModelForm):
 		if Attendance.objects.filter(created_at=created_at).exists():
 			raise forms.ValidationError('You have already submitted attendance for this date')
 		return created_at 
+
+class EditAttendanceForm(ModelForm):
+	class Meta:
+		model = Attendance
+		fields = ['present','absent']

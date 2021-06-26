@@ -387,3 +387,26 @@ def attendance_view(request,class_id):
 		'class_room':class_room,
 	}
 	return render(request,'classes/attendance.html',context)
+
+def view_attendance(request,class_id):
+	class_room = ClassRoom.objects.get(id=class_id)
+	if request.method=="POST":
+		attendance_date = request.POST.get('attendance_date')
+		sResult = Attendance.objects.filter(class_room=class_room,created_at=attendance_date)
+		return render(request,'classes/view_attendance.html',{"data":sResult,"class_room":class_room})
+	else:
+		attendances = Attendance.objects.filter(class_room=class_room)
+		return render(request,'classes/view_attendance.html',{"data":attendances,"class_room":class_room})
+
+def edit_attendance(request,class_id,att_id):
+	class_room = ClassRoom.objects.get(id=class_id)
+	attendance = Attendance.objects.get(id=att_id)
+	edit_att_form = EditAttendanceForm(instance=attendance)
+	if request.method == 'POST':
+		edit_att_form = EditAttendanceForm(request.POST,instance=attendance)
+		if edit_att_form.is_valid():
+			edit_att_form.save()
+			messages.success(request, 'Attendance edited successfully')
+			return redirect('http://127.0.0.1:8000/classes/class_info/'+str(class_id)+'/view_attendance')
+
+	return render(request,'classes/edit_attendance.html',{'edit_att_form':edit_att_form,'attendance':attendance,'class_room':class_room})

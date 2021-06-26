@@ -19,4 +19,6 @@ urlpatterns = [
 	path('classes/notification/<int:notification_id>/',views.delete_notification_view,name='delete_notification'),
 	# path('classes/s_class_info/<int:id>/<int:assignment_id>',views.submit_assignment_view,name='submit_assignment'),
 	path('classes/class_info/<int:class_id>/attendance',views.attendance_view,name='attendance'),
+	path('classes/class_info/<int:class_id>/view_attendance',views.view_attendance,name='view_attendance'),
+	path('classes/class_info/<int:class_id>/<int:att_id>/edit_attendance',views.edit_attendance,name='edit_attendance'),
 ]

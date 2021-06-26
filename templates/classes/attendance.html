@@ -8,11 +8,11 @@
 
 
 
-
+<link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">
 <script>
     document.formHasErrors = {% if attendanceForm.errors %}true{% else %}false{% endif %};
 </script>
-
+{% include 'side_panel.html' %}
 <div class="container" style="margin-top:90px">
 	
 	
@@ -22,26 +22,26 @@
 				<button type="submit" id="submit-attendance" class="btn btn-danger m-2 float-right">Submit Attendance</button> 
 			 </h5>
 			<div class="card-tools">
-              <div class="input-group input-group-sm" style="width: 250px;">
-              	{% for msg in messages %}
-		        <p class="text-success">{{msg}}</p>
-		        {% endfor %}
-              	<form method="POST" id="myform">
-              		<label >Select Date for attendance</label>
-              		{% csrf_token %}
-              		{{attendanceForm|crispy}}
-              		<button type="submit" id="submit-date" name="submit-date" class="btn btn-success">Select</button>
-              	</form>
-                <!-- <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+        <div class="input-group input-group-sm" style="width: 250px;">
+        	{% for msg in messages %}
+      		<p class="text-success">{{msg}}</p>
+      		{% endfor %}
+        	<form method="POST" id="myform">
+        		<label >Select Date for attendance</label>
+        		{% csrf_token %}
+        		{{attendanceForm|crispy}}
+        		<button type="submit" id="submit-date" name="submit-date" class="btn btn-success">Select</button>
+        	</form>
+          <!-- <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                </div> -->
-                
-              </div>
-            </div>
-            <div id="att-date" class="pt-3">
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+          </div> -->
+        </div>
+      </div>
+      <div id="att-date" class="pt-3">
 			</div>
+			<a class="text-center" href="{% url 'view_attendance' class_room.id %}">View Attendance</a>
 		</div>
 		<div class="card-body table-responsive p-0">
 			<table class="table table-sm table-hover text-nowrap ">
@@ -118,13 +118,8 @@
 				a_ids[i]=$(this).val();
 				console.log('a_ids'+ a_ids);
 			})
-			if (p_ids.length ===0){
-				alert('please select absent or present');
-			}
-			else if (a_ids.length===0){
-				alert('please select absent or present');
-			}
-			else{
+			
+			
 				$.ajax({
 				url:window.location.href,
 				method:'POST',
@@ -140,7 +135,7 @@
 					location.reload()
 				},
 			})	
-			}
+			
 			
 		})
 		$("#myform")[0].reset();
