@@ -9,7 +9,7 @@ class UserProfile(models.Model):
 	address = models.TextField(null=True,blank=True)
 	role_choice = (('Lecturer', 'Lecturer'),('Student', 'Student'))
 	role = models.CharField(max_length=100,choices=role_choice,default='Lecturer')
-	user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
+	user = models.OneToOneField(User,null=True,on_delete=models.CASCADE,default='')
 	bio = models.TextField(null=True,blank=True)
 	profile_pic = models.ImageField(null=True,blank=True,default='profile pic.jpg',upload_to='profiles/')
 	website_url = models.URLField(max_length=150,blank=True,null=True)

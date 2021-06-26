@@ -114,11 +114,6 @@
 
 </style>
 
-<!-- <div class="header" style="margin-top:70px">
-  <div class="progress-container">
-    <div class="progress-bar" id="myBar"></div>
-  </div>
-</div> -->
 
 <div class="row justify-content-center" style="margin-top:90px" >
 	<button style="margin-right:5px;" class="btn btn-outline-info" data-toggle="modal" data-target="#myModalCreate" ><i class="fa fa-plus-circle"></i> Create Class</button>
@@ -225,18 +220,14 @@
 					</div>
 
 					<!-- Avatar group of students joined  -->
+					{% for std in class.student_set.all|slice:":3" %}
 					<div class="avatar-group avatar-group-lg avatar-group-overlapped mr-40 mt-25">
 					    <div class="avatar">
-					        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="avatar-img rounded-circle">
-					    </div>
-					    <div class="avatar">
-					        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="user" class="avatar-img rounded-circle">
-					    </div>
-					    <div class="avatar">
-					        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="user" class="avatar-img rounded-circle">
+					        <img src="{{std.student.userprofile.profile_pic.url}}" alt="user" class="avatar-img rounded-circle">
 					    </div>
 					</div>
-
+					{% endfor %}
+					<span class="float-right text-success mt-2">Enrolled Students {{class.student_set.count}}</span>
 				</div>
 			</div>
 		</div>

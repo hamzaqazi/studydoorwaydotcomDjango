@@ -8,7 +8,9 @@
 
 
 <link rel="stylesheet" type="text/css" href="{% static '/css/class_info.css' %}">	
-	
+<script>
+    document.formHasErrors = {% if attendanceForm.errors %}true{% else %}false{% endif %};
+</script>	
 <section class=" " style="margin-top:75px">
 	
 	{% include 'side_panel.html' %}
@@ -77,26 +79,26 @@
 													
 													<form method="POST",action="", enctype="multipart/form-data" novalidate>
 														{% csrf_token %}
-													<div class="group"> 
-														<input type="text" name="announcement_text" required>
-													      <span class="highlight"></span>
-													      <span class="bar"></span>
-													      <label>Announce something to your class</label>
-												    </div>
+														<div class="group"> 
+															<input type="text" name="announcement_text" required>
+														      <span class="highlight"></span>
+														      <span class="bar"></span>
+														      <label>Announce something to your class</label>
+													    </div>
 
- 	             <!-- adding attachments to announcement dropdown button -->
+	 	            									 <!-- adding attachments to announcement dropdown button -->
 
-												    <div class="dropdown" style="margin-bottom:10px;margin-left:50px">
-													  <button class="btn btn-outline-primary " type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-paperclip"></i>
-													      Add
-													  </button>
-													  <div class="dropdown-menu" aria-labelledby="dropDownMenuButton">
-													    <a class="dropdown-item" href=""><i class="fas fa-link"></i> Link</a>
-													    <a class="dropdown-item" ><input type="file" name="announcement_file" /><i class="far fa-file-alt"></i> File</a>
-													    <a class="dropdown-item" href="#"><i class="fa fa-youtube-play"></i> Youtube</a>
-													  </div>
-													  <button style="float:right;" type="submit" class="btn btn-outline-success" name="announce">Post <i class="fa fa-paper-plane"></i></button>
-													</div>
+													    <div class="dropdown" style="margin-bottom:10px;margin-left:50px">
+														  <button class="btn btn-outline-primary " type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-paperclip"></i>
+														      Add
+														  </button>
+														  <div class="dropdown-menu" aria-labelledby="dropDownMenuButton">
+														    <a class="dropdown-item" href=""><i class="fas fa-link"></i> Link</a>
+														    <a class="dropdown-item" ><input type="file" name="announcement_file" /><i class="far fa-file-alt"></i> File</a>
+														    <a class="dropdown-item" href="#"><i class="fa fa-youtube-play"></i> Youtube</a>
+														  </div>
+														  <button style="float:right;" type="submit" class="btn btn-outline-success" name="announce">Post <i class="fa fa-paper-plane"></i></button>
+														</div>
 													</form>
 
 												</div>
@@ -111,8 +113,8 @@
 										    		<div class="dropleft">
 												    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
 												    	</i>
-											    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
-														    <a class="dropdown-item" data-toggle="modal" data-target="#updateAnnModal" href=""><i class="far fa-edit"></i> Update</a>
+											    		<div class="dropdown-menu" aria-labelledby="dropdownEditAnnouncement">
+														    <a class="dropdown-item" href="{% url 'update_announcement' class.id announcement.id %}"><i class="far fa-edit"></i> Update</a>
 														    <a class="dropdown-item" data-toggle="modal" data-target="#deleteAnnModal" href=""><i class="far fa-trash-alt"></i>  Delete</a>
 														</div>
 												    </div>
@@ -121,7 +123,11 @@
 						    					<div class="d-flex flex-column comment-section" id="myGroup">
 												  <div class="bg-white p-2">
 												      <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{announcement.user.userprofile.profile_pic.url}}" width="40">
-												          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{announcement.user.first_name}}</span><span class="date text-black-50">Shared publicly - {{announcement.announcement_date|timesince}} ago</span></div>
+												          <div class="d-flex flex-column justify-content-start ml-2">
+												          	<span class="d-block font-weight-bold name">{{announcement.user.first_name}}</span>
+												          	<span class="date text-black-50">Shared publicly - {{announcement.announcement_date|timesince}} ago</span>
+												          	<span class="date text-black-50">Last Updated - {{announcement.last_updated|timesince}} ago</span>
+												          </div>
 												      </div>
 												      <div class="mt-2">
 												          <p class="comment-text">{{announcement.announcement_text}}</p>
@@ -195,6 +201,9 @@
 							    </div>
 							</div>
                       	</div>
+
+                    <!-- Class Work Tab -->
+
                   	<div class="tab-pane fade" id="pop2" role="tabpanel" aria-labelledby="pop2-tab">
                        <div class="pt-3"></div>
                        <div class="row" style="margin:10px">
@@ -209,113 +218,166 @@
 							  </div>
 							</div>
 						</div>
-						<div class="card border-0" style="max-width: 60rem">
-							<h5 class="card-header mb-3">Assignments</h5>
-							{% if assignments %}
-							{% for assignment in assignments%}
-							<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
-							  
-							  <div class="card-body text-dark">
-							    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
-							    	
-							    	<span style="float:right;">
-							    		<div class="dropleft">
-									    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
-									    	</i>
-								    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
-											    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
-											    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
-											</div>
-									    </div>
-								    </span>
-							    </h4>
-							    <hr style="border-top: 1px solid #F06529;">
+						<div class="row">
+							<div class="col-md-3">
+					            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+					                
+					                <a class="nav-link active" id="v-pills-assignments-tab" data-toggle="pill" href="#v-pills-assignments" role="tab" aria-controls="v-pills-assignments" aria-selected="true">Assignments</a>
+					                <a class="nav-link" id="v-pills-quizes-tab" data-toggle="pill" href="#v-pills-quizes" role="tab" aria-controls="v-pills-quizes" aria-selected="false">Quizes</a>
+					                <a class="nav-link" id="v-pills-lectures-tab" data-toggle="pill" href="#v-pills-lectures" role="tab" aria-controls="v-pills-lectures" aria-selected="false">Lectures</a>
+					                <a class="nav-link" id="v-pills-links-tab" data-toggle="pill" href="#v-pills-links" role="tab" aria-controls="v-pills-links" aria-selected="false">Links and turorials</a>
+					            </div>
+					        </div>
+					        <div class="col-md-9">
+					        	<div class="tab-content" id="v-pills-tabContent">
+
+					        		<!-- Assignments -->
+
+                					<div class="tab-pane fade show active" id="v-pills-assignments" role="tabpanel" aria-labelledby="v-pills-assignments-tab">
+                						<div class="card border-0" style="max-width: 60rem">
+											<h5 class="card-header mb-3">Assignments</h5>
+											{% if assignments %}
+											{% for assignment in assignments%}
+											<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
+											  
+											  <div class="card-body text-dark">
+											    <h4 class="card-title" style="text-align:left;">{{assignment.title}}
+											    	
+											    	<span style="float:right;">
+											    		<div class="dropleft">
+													    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditAssignment" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+													    	</i>
+												    		<div class="dropdown-menu" aria-labelledby="dropdownEditAssignment">
+															    <a class="dropdown-item" href="{% url 'update_assignment' class.id assignment.id %}"><i class="far fa-edit"></i> Update</a>
+															    <a class="dropdown-item" href="{% url 'delete_assignment' class.id assignment.id %}"><i class="far fa-trash-alt"></i>  Delete</a>
+															</div>
+													    </div>
+												    </span>
+											    </h4>
+											    <hr style="border-top: 1px solid #F06529;">
 
 
-							    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
-								    <div class="card-text">
-								    	<p style="text-align:left;"><i class="fas fa-file-alt"></i>
-								    		{{assignment.title}}
-								    		<small class="text-muted">
-								    			Posted {{assignment.assigning_date}}
-								    		</small><i class="fa fa-clock-o" aria-hidden="true"></i>
-								    		<span style="float:right;color:#ff3333">
-								    			Due date: {{assignment.due_date}}
-								    		</span>
-								    	</p>
-								    	
-								    </div>
-								    <div style="clear: both"></div>
-								</div>
-
-								<div id="collapse{{ forloop.counter }}" class="collapse">
-									<p class="card-text">
-										{% if assignment.file %}
-										<a style="margin-right:3px" href="{{ assignment.file.url }}" target="_blank">
-											<i class="fas fa-eye"> view file</i>
-										</a>
-										<a href="{{ assignment.file.url }}">
-											<i class="fas fa-file-download"> download file</i>
-										</a>
-										{% endif %}
-									</p>
-									<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
-									<hr style="border-top: 1px solid #8c8b8b;">
-									<a href="{% url 'student_work' class.id assignment.id %}">Student Work</a>
-								</div>
-
-							  </div>
-							</div>
-							{% endfor %}
-							{% endif %}
-						</div>
-						<!-- Quizes Section  -->
-						<div class="card border-0 " style="max-width: 60rem">
-							<h5 class="card-header mb-3">Quizes</h5>
-							{% if quizes %}
-							{% for quiz in quizes %}
-							<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
-								<div class="card-body text-dark">
-									<h4 class="card-title" style="text-align:left;">{{quiz.name}}
-							    	
-								    	<span style="float:right;">
-								    		<div class="dropleft">
-										    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditQuiz" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
-										    	</i>
-									    		<div class="dropdown-menu" aria-labelledby="dropdownEditQuiz">
-												    <a class="dropdown-item" href=""><i class="far fa-edit"></i> Update</a>
-												    <a class="dropdown-item" href=""><i class="far fa-trash-alt"></i>  Delete</a>
+											    <div title="Info" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false"aria-controls="collapse{{ forloop.counter }}">
+												    <div class="card-text">
+												    	<p style="text-align:left;"><i class="fas fa-file-alt"></i>
+												    		{{assignment.title}}
+												    		<small class="text-muted">
+												    			Posted {{assignment.assigning_date}}
+												    		</small><i class="fa fa-clock-o" aria-hidden="true"></i>
+												    		<span style="float:right;color:#ff3333">
+												    			Due date: {{assignment.due_date}}
+												    		</span>
+												    	</p>
+												    	
+												    </div>
+												    <div style="clear: both"></div>
 												</div>
-										    </div>
-									    </span>
-								    </h4>
-								    <hr style="border-top: 1px solid #F06529;">
-								    <p class="text-muted">
-								    	Topic: {{quiz.topic}}
-								    </p>
-								    <p class="text-muted">Number of questions: {{quiz.number_of_questions}}</p>
-								    <p class="text-muted">Required score to pass: {{quiz.required_score_to_pass}} % </p>
-								    <p class="text-muted">Difficulty: {{quiz.difficulty}}</p>
-								    <p class="text-muted"></p>
-								</div>
-								<div class="card-footer">
-							      <small class="text-muted">Created: {{quiz.created|naturaltime}}</small>
-							    </div>
+
+												<div id="collapse{{ forloop.counter }}" class="collapse">
+													<p class="card-text">
+														{% if assignment.file %}
+														<a style="margin-right:3px" href="{{ assignment.file.url }}" target="_blank">
+															<i class="fas fa-eye"> view file</i>
+														</a>
+														<a href="{{ assignment.file.url }}">
+															<i class="fas fa-file-download"> download file</i>
+														</a>
+														{% endif %}
+													</p>
+													<p class="card-text">Instructions : <small class="text-muted">{{assignment.instruction}}</small></p>
+													<hr style="border-top: 1px solid #8c8b8b;">
+													<a href="{% url 'student_work' class.id assignment.id %}">Student Work</a>
+												</div>
+
+											  </div>
+											</div>
+											{% endfor %}
+											{% endif %}
+										</div>	
+                					</div>
+
+                					<!-- Quizes Section  -->
+
+                					<div class="tab-pane fade" id="v-pills-quizes" role="tabpanel" aria-labelledby="v-pills-quizes-tab">
+
+										<div class="card border-0 " style="max-width: 60rem">
+											<h5 class="card-header mb-3">Quizes</h5>
+											{% if quizes %}
+											{% for quiz in quizes %}
+											<div class="card border border-dark shadow-0 mb-3" style="max-width: 60rem">
+												<div class="card-body text-dark">
+													<h4 class="card-title" style="text-align:left;">{{quiz.name}}
+											    	
+												    	<span style="float:right;">
+												    		<div class="dropleft">
+														    	<i class="fas fa-ellipsis-v" type="button" id="dropdownEditQuiz" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">	
+														    	</i>
+													    		<div class="dropdown-menu" aria-labelledby="dropdownEditQuiz">
+																    <a class="dropdown-item" href=""><i class="far fa-edit"></i> Update</a>
+																    <a class="dropdown-item" href=""><i class="far fa-trash-alt"></i>  Delete</a>
+																</div>
+														    </div>
+													    </span>
+												    </h4>
+												    <hr style="border-top: 1px solid #F06529;">
+												    <p class="text-muted">
+												    	Topic: {{quiz.topic}}
+												    </p>
+												    <p class="text-muted">Number of questions: {{quiz.number_of_questions}}</p>
+												    <p class="text-muted">Required score to pass: {{quiz.required_score_to_pass}} % </p>
+												    <p class="text-muted">Difficulty: {{quiz.difficulty}}</p>
+												    <p class="text-muted"></p>
+												</div>
+												<div class="card-footer">
+											      <small class="text-muted">Created: {{quiz.created|naturaltime}}</small>
+											    </div>
+											</div>
+											{% endfor %}
+											{% endif %}
+										</div>
+
+                					</div>
+
+                					<!-- Lectures  -->
+
+                					<div class="tab-pane fade" id="v-pills-lectures" role="tabpanel" aria-labelledby="v-pills-lectures-tab">
+                						<div class="text-center">
+                							<button type="button" data-toggle="modal" data-target="#uploadLecturesModal" class="btn btn-outline-primary">Upload Lectures</button>
+                						</div>
+                						{% for l in lectures %}
+                						<div class="card border-0 m-3" style="max-width: 60rem">
+											<h5 class="card-header mb-3">{{l.title}}</h5>
+											<div class="card-body">
+												<div class="mt-2 rounded" style="width:25%;overflow:hidden" id="cardshadow">
+											      	<div class="col">
+											      		<a href="{{ l.files.url }}" download>
+															<img  src="{% static 'images/files_image.png' %}" widht="40" height="40" alt="Download File">	
+														</a>
+														<a href="{{ l.files.url }}" download>
+															<b style="margin-top:20px;margin-left:20px;font-size:13px">Download Files</b>
+														</a>
+											      	</div>	 	
+											    </div>
+											</div>
+
+										</div>
+										{% endfor %}
+                					</div>
+					        	</div>
 							</div>
-							{% endfor %}
-							{% endif %}
 						</div>
-
-						
-
-
-
                   	</div>
-                  <div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
-                       <div class="pt-3"></div>
+                  	<div class="tab-pane fade" id="pop3" role="tabpanel" aria-labelledby="pop3-tab">
+                       	<div class="pt-3"></div>
 							<div class="card border-0">
 								<div class="card-header">
-									<h4>Instructors</h4>
+									<h4><i class="fas fa-chalkboard-teacher pr-2" style="color:tomato"></i>Instructors 
+										<span class="float-right">
+											
+											<a href="{% url 'attendance' class.id %}">Attendance</a><i class="fas fa-clipboard-list pl-3" style="color:tomato"></i>
+										</span>
+									</h4>
+
 								</div>
 								
 								<div class="card-body">
@@ -344,7 +406,7 @@
 
 							<div class="card border-0">
 								<div class="card-header">
-									<h4>Students</h4>
+									<h4><i class="fas fa-users pr-2" style="color:tomato"></i>Students</h4>
 								</div>
 								<div class="card-body">
 									<h6 class="card-subtitle mb-2 text-muted">{{students.count}} student{{students.count|pluralize}} are enrolled in this course</h6>
@@ -512,45 +574,40 @@
 	</div>
 </div>
 
-<!-- Update Announcement Modal -->
-<div class="modal fade" id="addAssignmentQuizModal">
+<!-- Upload Lectures Modal -->
+<div class="modal fade" id="uploadLecturesModal">
 	<div class="modal-dialog">
 	  <div class="modal-content">
 	  
 	    <!-- Modal Header -->
 	    <div class="modal-header">
-	      <h4 class="modal-title">Update Announcement</h4>
+	      <h4 class="modal-title">Upload Lectures</h4>
 	      <button type="button" class="close" data-dismiss="modal">&times;</button>
 	    </div>
 	    
 
 	    <form method="POST",action="", enctype="multipart/form-data">
+	    	{% csrf_token %}
 	    	<!-- Modal body -->
 		    <div class="modal-body">
-	    		
+		    	<div class="group"> 
+					<input type="text" name="lecture_title" required>
+				      <span class="highlight"></span>
+				      <span class="bar"></span>
+				      <label>Lectures Title</label>
+				      <small class="text-muted">for example WEEK 1 LECTURES</small>
+				    <input type="file" multiple name="lecture_files" required>
+			    </div>	
 		    </div>
 		    
 		    <!-- Modal footer -->
 		    <div class="modal-footer">
 		      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-		      <button type="submit" class="btn btn-outline-success" name="update_announcement">Save</button>
+		      <button type="submit" class="btn btn-outline-success" name="upload_lectures">Upload</button>
 		    </div>
 	    </form>
 	    
 	  </div>
 	</div>
 </div>
-
-<!-- <script>
-	/* Set the width of the sidebar to 250px (show it) */
-	function openNav() {
-	  document.getElementById("mySidepanel").style.width = "300px";
-	}
-
-	/* Set the width of the sidebar to 0 (hide it) */
-	function closeNav() {
-	  document.getElementById("mySidepanel").style.width = "0";
-	}
-</script> -->
-
 {% endblock %}

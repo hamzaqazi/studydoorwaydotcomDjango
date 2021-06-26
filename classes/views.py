@@ -9,6 +9,7 @@ from accounts.models import *
 from django.views.generic.detail import DetailView
 from quizes.models import Quiz
 import datetime
+from django.http import JsonResponse
 
 @login_required
 def create_class_view(request):
@@ -20,6 +21,7 @@ def create_class_view(request):
 	notifications = Notification.objects.filter(viewed=False)
 	
 	classes_joined = [] 
+	
 	for student_info in student:
 		classes_joined.append(student_info.class_room)
 
@@ -95,6 +97,22 @@ def announcement_comments_view(request,announcement_id,class_id):
 			return HttpResponseRedirect(reverse('s_class_info', args=[str(class_id)]))		
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
+def announcement_update_view(request,class_id,announcement_id):
+	announcement = Announcement.objects.get(id=announcement_id)
+	update_announcement_form = CreateAnnouncement(instance=announcement)
+	if request.method == 'POST':
+		update_announcement_form = CreateAnnouncement(request.POST,request.FILES,instance=announcement)
+		if update_announcement_form.is_valid():
+			update_announcement_form.save()
+			messages.success(request, 'Announcement updated successfully')
+			return redirect('class_info',id=class_id)
+
+	context = {
+		'update_announcement_form': update_announcement_form,
+		'announcement':announcement,
+	}
+	return render(request,'classes/update_announcement.html',context)
+
 @login_required
 def class_info_view(request,id):
 	student = request.user
@@ -104,22 +122,34 @@ def class_info_view(request,id):
 	for student_info in student_classes:
 		classes_joined.append(student_info.class_room)
 
-	
 
 	classroom = ClassRoom.objects.get(id=id)
 	assignments = Assignment.objects.filter(class_room = id)
 	students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
 	quizes = Quiz.objects.filter(class_room=classroom)
+	lectures = Lecture.objects.filter(class_room=classroom).order_by('-upload_date')
 
-
+	
 	create_class_form = CreateClassRoom(instance=classroom)
 	create_assignment_form = CreateAssignment()
 	create_announcement_form = CreateAnnouncement()
 	create_quiz_form = CreateQuiz()
 
+
 	announcements = Announcement.objects.filter(class_room=classroom).order_by('-announcement_date')
 	if request.method == 'POST':
+
+		if 'upload_lectures' in request.POST:
+			lecture_title = request.POST.get('lecture_title')
+			lecture_files = request.FILES.getlist('lecture_files')
+
+			for f in lecture_files:
+				Lecture.objects.create(title=lecture_title,files=f,class_room=classroom)
+
+			messages.success(request,'Lectures uploaded successfully')
+			return redirect('class_info',id=id)
+
 		if 'announce' in request.POST:
 			
 			announcement_text = request.POST.get('announcement_text')
@@ -154,7 +184,10 @@ def class_info_view(request,id):
 		if 'create_quiz' in request.POST:
 			create_quiz_form = CreateQuiz(request.POST)
 			if create_quiz_form.is_valid():
-				create_quiz_form.save()
+				instanace = create_quiz_form.save(commit=False)
+				instance.user = request.user
+				instance.class_room = classroom
+				instance.save()
 				messages.success(request,'Assignment Quiz created successfully')
 				return redirect('class_info',id=id)
 
@@ -170,6 +203,7 @@ def class_info_view(request,id):
 		'classes_joined':classes_joined,
 		'announcements':announcements,
 		'quizes':quizes,
+		'lectures':lectures,
 	}
 	return render(request,'classes/class_info.html',context)
 
@@ -309,3 +343,47 @@ def s_assignment_detail_view(request,class_id,assignment_id):
 		's_submission' : s_submission,
 	}
 	return render(request,'classes/s_assignment_detail.html',context)
+
+def attendance_view(request,class_id):
+	class_room = ClassRoom.objects.get(id=class_id)
+	students = Student.objects.filter(class_room=class_room)
+	attendanceForm = AttendanceForm()
+	attendances = Attendance.objects.filter(class_room=class_room)
+	
+	if request.method == 'POST':
+		if 'submit-date' in request.POST:
+			attendanceForm = AttendanceForm(request.POST)
+			if attendanceForm.is_valid():
+				created_at = request.POST.get('created_at')
+				if Attendance.objects.filter(created_at=created_at).exists():
+					messages.warning(request,'You have already submitted attendance for this date')
+
+	if request.is_ajax() and request.method == 'POST':
+		created_at = request.POST.get('attDate')
+		present_ids = request.POST.getlist('p_ids[]')
+		absent_ids = request.POST.getlist('a_ids[]')
+
+		for pid in present_ids:
+			student = Student.objects.get(pk=pid)
+			Attendance.objects.create(student=student,present=True,class_room=class_room,created_at=created_at)
+		for aid in absent_ids:
+			student = Student.objects.get(pk=aid)
+			Attendance.objects.create(student=student,absent=True,class_room=class_room,created_at=created_at)
+
+		messages.success(request,'Attendance submitted successfully')
+		ps = Attendance.objects.filter(present=True)
+		present_s = []
+		for pr_s in ps:
+			present_s.append((pr_s.student.student.first_name, pr_s.present,pr_s.created_at))
+		return JsonResponse({
+			'attendance':list(present_s),
+		})
+			
+		
+
+	context = {
+		'students':students,
+		'attendanceForm':attendanceForm,
+		'class_room':class_room,
+	}
+	return render(request,'classes/attendance.html',context)

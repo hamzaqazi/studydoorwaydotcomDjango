@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django.contrib.humanize',
+    'django_extensions',
 
 
     'accounts.apps.AccountsConfig',
@@ -112,12 +113,24 @@ WSGI_APPLICATION = 'studydoorwaydotcom.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'studydoorway',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
     }
 }
+
 
 # AUTH_USER_MODEL = "chat.User" 
 # Password validation
@@ -190,3 +203,8 @@ EMAIL_HOST_USER='hqazi62@gmail.com'
 EMAIL_HOST_PASSWORD='hamzakhan623'
 EMAIL_USE_TLS=True
 EMAIL_PORT=587
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}

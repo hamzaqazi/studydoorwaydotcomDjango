@@ -70,9 +70,6 @@
 						    			{% endfor %}
 						    			{% else %}
 
-						    			<p>No assignments found</p>
-
-
 						    			<p class="text-muted mt-3" style="font-size:small;text-align:center">Wohoo! No Work</p>
 
 						    			{% endif %}
@@ -80,7 +77,7 @@
 						    		<div class="col rounded">
 						    			
 
-						    				{% if announcements %}
+						    			{% if announcements %}
 						    			{% for announcement in announcements %}
 						    			<div class="row rounded" style="margin-top:20px" id="cardshadow">
 						    				<div class="col rounded">
@@ -358,17 +355,6 @@
 </style>
 
 
-
-
-    <!-- The Submit Assignment Modal -->
-<div class="modal fade" id="submitAssignmentModal">
-	<div class="modal-dialog">
-	  <div class="modal-content">
-	  
-	    <!-- Modal Header -->
-	    <div class="modal-header">
-	      <h4 class="modal-title">Submit Assignment</h4>
-	      <button type="button" class="close" data-dismiss="modal">&times;</button>
 
     <!-- Start Quiz modal -->
     <div class="modal fade" id="quizStartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

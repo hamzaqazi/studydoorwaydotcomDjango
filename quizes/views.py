@@ -14,12 +14,12 @@ class QuizListView(ListView):
 	template_name = 'quizes/quizes_main.html'
 
 
-def quiz_view(request,pk):
+def quiz_view(request,classId,pk):
 	quiz = Quiz.objects.get(pk=pk)
 	return render(request,'quizes/quiz.html',{'obj':quiz})
 
 
-def quiz_data_view(request,pk):
+def quiz_data_view(request,classId,pk):
 	quiz = Quiz.objects.get(pk=pk)
 	questions = []
 	for q in quiz.get_questions():
@@ -32,7 +32,7 @@ def quiz_data_view(request,pk):
 		'time':quiz.time,
 	})
 
-def save_quiz_view(request,pk):
+def save_quiz_view(request,classId,pk):
 	# print(request.POST)
 	if request.is_ajax():
 		questions = []

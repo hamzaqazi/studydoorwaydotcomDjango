@@ -2,6 +2,17 @@ from django import forms
 from django.forms import ModelForm
 from .models import *
 from quizes.models import Quiz
+from questions.models import Question,Answer
+from django.contrib import admin
+
+
+class RateForm(forms.ModelForm):
+	text = forms.CharField(widget=forms.Textarea(attrs={'class': 'materialize-textarea'}), required=False)
+	rate = forms.ChoiceField(choices=RATE_CHOICES, widget=forms.Select(), required=True)
+
+	class Meta:
+		model = Review
+		fields = ('text', 'rate')
 
 class DateInput(forms.DateInput):
 	input_type = 'date'
@@ -34,6 +45,12 @@ class CreateAssignment(ModelForm):
 		fields = '__all__'
 		exclude = ['user','class_room']
 
+# class UploadLecture(ModelForm):
+# 	class Meta:
+# 		model = Lecture
+# 		fields = '__all__'
+# 		exclude = ['class_room']
+
 
 class JoinClassRoom(forms.Form):
 	student_key = forms.CharField(max_length=50,help_text='Enter the class joining key provided by class creator')
@@ -49,13 +66,16 @@ class CreateAnnouncement(ModelForm):
 	class Meta:
 		model = Announcement
 		fields = '__all__'
+		exclude = ['user','class_room','likes']
 
-
+# Quizes Forms 
 class CreateQuiz(ModelForm):
 	class Meta:
 		model = Quiz
 		fields = '__all__'
 		exclude = ['created_by','class_room']
+
+
 		
 class SubmitAssignment(ModelForm):
 	class Meta:
@@ -73,3 +93,16 @@ class FeedbackForm(forms.Form):
     
     class Meta:
         fields = ['feedback']
+
+class AttendanceForm(ModelForm):
+	created_at = models.DateField(help_text='Select date for attendance')
+	class Meta:
+		model = Attendance
+		widgets = {'created_at' : DateInput()}
+		fields = ['created_at']
+
+	def clean_created_at(self):
+		created_at = self.cleaned_data['created_at']
+		if Attendance.objects.filter(created_at=created_at).exists():
+			raise forms.ValidationError('You have already submitted attendance for this date')
+		return created_at 
