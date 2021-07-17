@@ -130,6 +130,7 @@
 					csrfmiddlewaretoken:csrf,
 				},
 				success:function(response){
+					$("#myform")[0].reset();
 					attendance = response.attendance
 					console.log(attendance)
 					location.reload()

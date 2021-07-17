@@ -5,6 +5,7 @@ from django.views.generic import ListView
 from django.http import JsonResponse
 from questions.models import Question,Answer
 from results.models import Result
+from classes.models import Student
 
 class QuizListView(ListView):
 	# class_room = ClassRoom.objects.get(id=class_id)
@@ -16,7 +17,12 @@ class QuizListView(ListView):
 
 def quiz_view(request,classId,pk):
 	quiz = Quiz.objects.get(pk=pk)
-	return render(request,'quizes/quiz.html',{'obj':quiz})
+	class_room = ClassRoom.objects.get(id=classId)
+	student = Student.objects.get(student=request.user,class_room=class_room)
+	if Result.objects.filter(quiz=quiz,student=student).exists():
+		return render(request,'quizes/quiz_done.html')
+	else:
+		return render(request,'quizes/quiz.html',{'obj':quiz,'class_room':class_room})
 
 
 def quiz_data_view(request,classId,pk):
@@ -48,7 +54,8 @@ def save_quiz_view(request,classId,pk):
 		print(questions)
 
 
-		user = request.user
+		class_room = ClassRoom.objects.get(id=classId)
+		student = Student.objects.get(student=request.user,class_room=class_room)
 		quiz = Quiz.objects.get(pk=pk)
 
 		score = 0
@@ -75,7 +82,7 @@ def save_quiz_view(request,classId,pk):
 				results.append({str(q):'not answered'})			
 		
 		score_ = score * multiplier
-		Result.objects.create(quiz=quiz, user=user, score=score_)	
+		Result.objects.create(quiz=quiz, student=student, score=score_, class_room=class_room)	
 
 		if score_ >= quiz.required_score_to_pass:
 			return JsonResponse({'passed':True, 'score':score_, 'results':results})

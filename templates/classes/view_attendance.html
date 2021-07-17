@@ -21,6 +21,7 @@
 				<input type="date" name="attendance_date" required>
 				<button class="btn btn-outline-dark" type="submit">Search</button>
 			</form>
+			<a href="{% url 'export_excel' class_room.id %}">Export Attendance in Excel File</a>
 		</div>
 		<div class="card-body table-responsive p-0">
 		  <table class="table table-sm table-hover text-nowrap">
@@ -29,7 +30,7 @@
 						<th>ID</th>
 						<th>First Name</th>
 						<th>Last Name</th>
-						<th>User Name</th>
+						<th>Attendance Date</th>
 						<th>Date Joined</th>
 						<th>Email</th>
 						<th>Attendance</th>
@@ -42,7 +43,7 @@
 						<td>{{att.id}}</td>
 						<td>{{att.student.student.first_name}}</td>
 						<td>{{att.student.student.last_name}}</td>
-						<td>{{att.student.student.username}}</td>
+						<td>{{att.created_at}}</td>
 						<td>{{att.student.added_at}}</td>
 						<td>{{att.student.student.email}}</td>
 						{% if att.present%}

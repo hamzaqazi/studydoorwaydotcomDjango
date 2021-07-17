@@ -75,6 +75,20 @@ class CreateQuiz(ModelForm):
 		fields = '__all__'
 		exclude = ['created_by','class_room']
 
+class QuizQuestionForm(ModelForm):
+	text = forms.CharField(max_length=250,help_text='Enter question text here.')
+
+	class Meta:
+		model = Question
+		fields = '__all__'
+
+class QuizAnswerForm(ModelForm):
+	text = forms.CharField(max_length=250,help_text='Enter answer text here.')
+	class Meta:
+		model = Answer
+		fields = '__all__'
+		exclude = ['question']
+
 
 		
 class SubmitAssignment(ModelForm):
@@ -83,7 +97,7 @@ class SubmitAssignment(ModelForm):
 		fields = ['file']
 
 class GradeForm(forms.Form):
-    grade = forms.CharField(help_text='Enter points obtained')
+    grade = forms.IntegerField(help_text='Enter points obtained')
 
     class Meta:
         fields = ['grade']
@@ -111,3 +125,10 @@ class EditAttendanceForm(ModelForm):
 	class Meta:
 		model = Attendance
 		fields = ['present','absent']
+
+
+class MidFinalMarksForm(ModelForm):
+	class Meta:
+		model = MidFinalMarks
+		fields = '__all__'
+		exclude =['student','class_room']

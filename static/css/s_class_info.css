@@ -1,3 +1,6 @@
+.checked {
+  color: tomato;
+}
 .nav-tabs .nav-link.active {
   font-weight:bold;
   background-color: transparent;

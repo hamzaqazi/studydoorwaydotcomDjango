@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'django.contrib.humanize',
     'django_extensions',
+    'star_ratings',
 
 
     'accounts.apps.AccountsConfig',
@@ -124,7 +125,7 @@ WSGI_APPLICATION = 'studydoorwaydotcom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'studydoorway',
+        'NAME': 'studydoorway_newdb',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',

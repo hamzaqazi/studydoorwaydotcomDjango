@@ -17,6 +17,7 @@ from accounts.views import (
 router=routers.DefaultRouter()
 router.register(r'ajaxusers',getMessages)
 
+app_name = 'ratings'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('accounts/userprofile/<int:profile_id>', userprofile_view,name='userprofile'),
     path('accounts/register_as_teacher/<int:prof_id>', register_as_teacher_view,name='register_as_teacher'),
     path('chat/', include('chat.urls', namespace='chat')),
+    path('ratings/', include('star_ratings.urls', namespace='ratings')),
     
 ]
 urlpatterns+=router.urls

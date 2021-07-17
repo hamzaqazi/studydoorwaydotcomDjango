@@ -72,22 +72,22 @@ class Instructor(models.Model):
 
 class Assignment(models.Model):
 	POINTS = (
-		('10','10'),
-		('20','20'),
-		('30','30'),
-		('40','40'),
-		('50','50'),
-		('60','60'),
-		('70','70'),
-		('80','80'),
-		('90','90'),
-		('100','100'),
+		(10,'10'),
+		(20,'20'),
+		(30,'30'),
+		(40,'40'),
+		(50,'50'),
+		(60,'60'),
+		(70,'70'),
+		(80,'80'),
+		(90,'90'),
+		(100,'100'),
 	)
 	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
 	title = models.CharField(max_length=100)
 	instruction = models.TextField(max_length=500,null=True,blank=True)
 	file = models.FileField(blank=True,upload_to='files/t_assignments/')
-	points = models.CharField(max_length=100, null=True, choices=POINTS, default=100)
+	points = models.IntegerField(null=True, choices=POINTS, default=100)
 	due_date = models.DateTimeField()
 	assigning_date = models.DateTimeField(auto_now_add=True)
 	last_updated = models.DateTimeField(auto_now=True)
@@ -103,9 +103,18 @@ class Submission(models.Model):
 	submitted_at = models.DateTimeField(auto_now=True)
 	last_updated = models.DateTimeField(null=True)
 	assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE,related_name='submissions')
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	grade = models.CharField(max_length=100, blank=True, null=True, default='No grade yet')
-	feedback = models.CharField(max_length=100, blank=True, null=True, default='No feedback yet')
+	student = models.ForeignKey(Student, on_delete=models.CASCADE)
+	grade = models.IntegerField(blank=True, null=True, default=000)
+	feedback = models.CharField(max_length=350, blank=True, null=True, default='No feedback yet')
+
+
+class MidFinalMarks(models.Model):
+	student = models.ForeignKey(Student, on_delete=models.CASCADE)
+	class_room = models.ForeignKey(ClassRoom,null=True, on_delete=models.CASCADE)
+	final_marks = models.IntegerField(blank=True, null=True, default=0,help_text='Final term obtained marks')
+	final_marks_out_of = models.IntegerField(blank=True, null=True, default=0,help_text='Final term total marks')
+	mid_marks = models.IntegerField(blank=True, null=True, default=0,help_text='Mid term obtained marks')
+	mid_marks_out_of = models.IntegerField(blank=True, null=True, default=0,help_text='Mid term total marks')
 
 
 class Notification(models.Model):
@@ -118,7 +127,7 @@ class Notification(models.Model):
 
 	def get_unread_notification(self):
 		return self.notification_set.filter(viewed=False)
-
+ 
 class Attendance(models.Model):
 	class_room = models.ForeignKey(ClassRoom, on_delete=models.DO_NOTHING)
 	present = models.BooleanField(default=False)

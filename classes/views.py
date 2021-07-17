@@ -8,12 +8,91 @@ from .models import *
 from accounts.models import *
 from django.views.generic.detail import DetailView
 from quizes.models import Quiz
+from results.models import Result
 import datetime
 from django.http import JsonResponse
 
+
+# Generate a PDF file Students Grades
+
+
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+def render_pdf_view(request,class_id,s_id):
+	template_path = 'classes/DMC_Test.xhtml'
+	student = Student.objects.get(id=s_id)
+	class_room = ClassRoom.objects.get(id=class_id)
+	students = Student.objects.filter(class_room=class_room)
+	assignments = Assignment.objects.filter(class_room=class_room)
+	mid_final_marks = MidFinalMarks.objects.get(class_room=class_room,student=student)
+
+	total_quizes_points = Quiz.objects.filter(class_room=class_room).count()*100
+
+	passed_quizes = 0
+	failed_quizes = 0
+	for q in Quiz.objects.filter(class_room=class_room):
+		if Result.objects.filter(quiz=q,student=student).exists():
+			obtained_quizes_points = Result.objects.get(quiz=q,student=student).score
+			if obtained_quizes_points >= q.required_score_to_pass:
+				passed_quizes +=100
+			else:
+				failed_quizes -=100
+		else:
+			pass
+	if passed_quizes < 0:
+		passed_quizes = 0
+	elif failed_quizes < 0 :
+		failed_quizes = 0
+
+	obtained_quizes_points = passed_quizes-failed_quizes
+	
+
+	obtained_assignments_points = 0
+	for sub in student.submission_set.all():
+	 	obtained_assignments_points += sub.grade
+
+	total_assignments_points = 0
+	for ap in assignments:
+	 	total_assignments_points += ap.points
+
+
+	assignment_per = (obtained_assignments_points/total_assignments_points)*10
+	quizes_per = (obtained_quizes_points/total_quizes_points)*10
+	mid_per = (mid_final_marks.mid_marks/mid_final_marks.mid_marks_out_of)*20
+	final_per = (mid_final_marks.final_marks/mid_final_marks.final_marks_out_of)*60
+	total_per = assignment_per+quizes_per+mid_per+final_per
+
+	context = {
+		'student':student,
+		'class':class_room,
+		'total_per':total_per,
+		'ass_per':assignment_per,
+		'quiz_per':quizes_per,
+		'mid_per':mid_per,
+		'final_per':final_per,
+		'students':students,
+	}
+	 # Create a Django response object, and specify content_type as pdf
+	response = HttpResponse(content_type='application/pdf')
+	response['Content-Disposition'] = 'filename="Student Report.pdf"'
+	 # find the template and render it.
+	template = get_template(template_path)
+	html = template.render(context)
+
+	 # create a pdf
+	pisa_status = pisa.CreatePDF(
+	   html, dest=response)
+	 # if error then show some funy view
+	if pisa_status.err:
+	   return HttpResponse('We had some errors <pre>' + html + '</pre>')
+	return response
+
+
+ 
 @login_required
 def create_class_view(request):
-	
 	form = CreateClassRoom()
 	join_class_form = JoinClassRoom()
 	classes_created = ClassRoom.objects.filter(user=request.user)
@@ -85,6 +164,8 @@ def announcement_likes_view(request,pk,class_id):
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
 
+
+@login_required
 def announcement_comments_view(request,announcement_id,class_id):
 	student = request.user
 	class_room = ClassRoom.objects.get(id=class_id) 
@@ -97,6 +178,9 @@ def announcement_comments_view(request,announcement_id,class_id):
 			return HttpResponseRedirect(reverse('s_class_info', args=[str(class_id)]))		
 	return HttpResponseRedirect(reverse('class_info', args=[str(class_id)]))
 
+
+
+@login_required
 def announcement_update_view(request,class_id,announcement_id):
 	announcement = Announcement.objects.get(id=announcement_id)
 	update_announcement_form = CreateAnnouncement(instance=announcement)
@@ -113,6 +197,20 @@ def announcement_update_view(request,class_id,announcement_id):
 	}
 	return render(request,'classes/update_announcement.html',context)
 
+
+@login_required
+def announcement_delete_view(request,class_id,announcement_id):
+	announcement = Announcement.objects.get(id=announcement_id)
+	if request.method == 'POST':
+		announcement.delete()
+		messages.warning(request, 'Announcement deleted successfully')
+		return redirect('class_info',id=class_id)
+
+	context = {
+		'announcement':announcement,
+	}
+	return render(request,'classes/delete_announcement.html',context)
+
 @login_required
 def class_info_view(request,id):
 	student = request.user
@@ -125,10 +223,19 @@ def class_info_view(request,id):
 
 	classroom = ClassRoom.objects.get(id=id)
 	assignments = Assignment.objects.filter(class_room = id)
-	students = Student.objects.filter(class_room=classroom)
+	if 's' in request.GET:
+		s = request.GET['s']
+		students = Student.objects.filter(student__first_name__icontains = s)
+
+		if not students:
+			messages.warning(request,'Student not found')
+	else:
+		students = Student.objects.filter(class_room=classroom)
 	instructors = Instructor.objects.filter(class_room=classroom)
 	quizes = Quiz.objects.filter(class_room=classroom)
 	lectures = Lecture.objects.filter(class_room=classroom).order_by('-upload_date')
+
+
 
 	
 	create_class_form = CreateClassRoom(instance=classroom)
@@ -184,8 +291,8 @@ def class_info_view(request,id):
 		if 'create_quiz' in request.POST:
 			create_quiz_form = CreateQuiz(request.POST)
 			if create_quiz_form.is_valid():
-				instanace = create_quiz_form.save(commit=False)
-				instance.user = request.user
+				instance = create_quiz_form.save(commit=False)
+				instance.created_by = request.user
 				instance.class_room = classroom
 				instance.save()
 				messages.success(request,'Assignment Quiz created successfully')
@@ -208,11 +315,75 @@ def class_info_view(request,id):
 	return render(request,'classes/class_info.html',context)
 
 
+def add_final_marks_view(request,class_id,s_id):
+	student = Student.objects.get(id=s_id)
+	class_room = ClassRoom.objects.get(id=class_id)
+	if MidFinalMarks.objects.filter(student=student,class_room=class_room).exists():
+		midMarks = MidFinalMarks.objects.get(student=student,class_room=class_room) 
+		mid_final_marks_form = MidFinalMarksForm(instance=midMarks)
+	else:
+		mid_final_marks_form = MidFinalMarksForm()
+
+	if request.method == 'POST':
+		if MidFinalMarks.objects.filter(student=student,class_room=class_room).exists():
+			midFinal = MidFinalMarks.objects.get(student=student,class_room=class_room)
+			mid_final_marks_form = MidFinalMarksForm(request.POST,instance=midFinal)
+			if mid_final_marks_form.is_valid():
+				mid_final_marks_form.save()
+				messages.success(request,'Mid & Final marks submitted successfully for '+student.student.first_name)
+		else:
+			mid_final_marks_form = MidFinalMarksForm(request.POST)
+			if mid_final_marks_form.is_valid():
+				instance = mid_final_marks_form.save(commit=False)
+				instance.student = student
+				instance.class_room = class_room
+				instance.save()
+				messages.success(request,'Mid & Final marks submitted successfully for '+student.student.first_name)
+
+	context = {
+		'student':student,
+		'form': mid_final_marks_form,
+	}
+
+	return render(request,'classes/final_marks.html',context)
+
+
+
+from django.forms.formsets import formset_factory
+
+def add_question_view(request,class_id,quiz_id):
+	quiz = Quiz.objects.get(id=quiz_id)
+	class_room = ClassRoom.objects.get(id=class_id)
+
+	QuizAnswerFormSet = formset_factory(QuizAnswerForm, extra=2, min_num=2, validate_min=True)
+
+	if request.method == 'POST':
+		question_form = QuizQuestionForm(request.POST)
+		formset = QuizAnswerFormSet(request.POST)
+		if all([question_form.is_valid(), formset.is_valid()]):
+			question = question_form.save()
+			for inline_form in formset:
+				if inline_form.cleaned_data:
+					answer = inline_form.save(commit=False)
+					answer.question = question
+					answer.save()
+			messages.success(request,'Question added to quiz successfully')
+			return redirect('class_info', id=class_id)
+	else:
+		question_form = QuizQuestionForm()
+		formset = QuizAnswerFormSet()
+	context = {
+		'question_form':question_form,
+		'formset':formset,
+	}
+	return render(request,'classes/add_question.html',context)
+
+@login_required
 def student_work_view(request,class_id,assignment_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	assignment = Assignment.objects.get(id=assignment_id)
-	submissions = assignment.submissions.all()
-	ungraded_sub = assignment.submissions.filter(grade='No grade yet').count()
+	submissions = assignment.submissions.all().order_by('-submitted_at')
+	ungraded_sub = assignment.submissions.filter(grade=000).count()
 	grade_form = GradeForm(request.POST or None)
 	feedback_form = FeedbackForm(request.POST or None)
 	print(submissions)
@@ -224,19 +395,21 @@ def student_work_view(request,class_id,assignment_id):
 				submission = Submission.objects.get(id=submission_id)
 				submission.feedback = feedback
 				submission.save()
-				messages.success(request,'Feedback added successfully for '+submission.user.username)
+				messages.success(request,'Feedback added successfully for '+submission.student.student.username)
 				notification = Notification.objects.create(user=request.user,class_room=class_room,assignment=assignment,title='New Feedback')
+				# return redirect('http://127.0.0.1:8000/classes/'+str(class_id)+'/'+str(assignment_id)+'/student_work')
 		if 'submit-grade' in request.POST:
 			if grade_form.is_valid():
 				grade = request.POST['grade']
+				grade = int(grade)
 				if grade > assignment.points:
-					messages.warning(request,'Max points for this assignment is '+assignment.points)
+					messages.warning(request,'Max points for this assignment is '+ str(assignment.points))
 				else:
 					submission_id = request.POST['submit-grade']
 					submission = Submission.objects.get(id=submission_id)
 					submission.grade = grade
 					submission.save()
-					messages.success(request,"Submission graded successfully for "+submission.user.username)
+					messages.success(request,"Submission graded successfully for "+submission.student.student.username)
 					notification = Notification.objects.create(user=request.user,class_room=class_room,assignment=assignment,title='New Grade')
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=class_id),
@@ -258,6 +431,63 @@ def s_class_info_view(request,id):
 	class_room = ClassRoom.objects.get(id=id)
 	announcements = class_room.announcements.all().order_by('-announcement_date')
 	quizes = Quiz.objects.filter(class_room=class_room)
+	lectures = Lecture.objects.filter(class_room=class_room).order_by('-upload_date')
+
+
+	student = Student.objects.get(student=request.user,class_room=class_room)
+	# students = Student.objects.filter(class_room=class_room)
+	mid_final_marks = MidFinalMarks.objects.get(class_room=class_room,student=student)
+
+	total_quizes_points = Quiz.objects.filter(class_room=class_room).count()*100
+
+	passed_quizes = 0
+	failed_quizes = 0
+	for q in Quiz.objects.filter(class_room=class_room):
+		if Result.objects.filter(quiz=q,student=student).exists():
+			obtained_quizes_points = Result.objects.get(quiz=q,student=student).score
+			if obtained_quizes_points >= q.required_score_to_pass:
+				passed_quizes +=100
+			else:
+				failed_quizes -=100
+		else:
+			pass
+	if passed_quizes < 0:
+		passed_quizes = 0
+	elif failed_quizes < 0 :
+		failed_quizes = 0
+
+	obtained_quizes_points = passed_quizes-failed_quizes
+	
+
+	obtained_assignments_points = 0
+	for sub in student.submission_set.all():
+	 	obtained_assignments_points += sub.grade
+
+	total_assignments_points = 0
+	for ap in assignments:
+	 	total_assignments_points += ap.points
+
+
+	assignment_per = (obtained_assignments_points/total_assignments_points)*100
+	quizes_per = (obtained_quizes_points/total_quizes_points)*100
+	mid_per = (mid_final_marks.mid_marks/mid_final_marks.mid_marks_out_of)*100
+	final_per = (mid_final_marks.final_marks/mid_final_marks.final_marks_out_of)*100
+	total_per = ((obtained_assignments_points/total_assignments_points)*10)+((obtained_quizes_points/total_quizes_points)*10)+((mid_final_marks.mid_marks/mid_final_marks.mid_marks_out_of)*20)+((mid_final_marks.final_marks/mid_final_marks.final_marks_out_of)*60)
+
+	if total_per >=80:
+		grade = 'A'
+	elif total_per >=75:
+		grade = 'B+'
+	elif total_per >=70:
+		grade = 'B'
+	elif total_per >=65:
+		grade = 'C+'
+	elif total_per >=60:
+		grade = 'C'
+	elif total_per <60:
+		grade = 'F'
+
+
 
 	context = {
 		'class':get_object_or_404(ClassRoom, pk=id),
@@ -266,6 +496,14 @@ def s_class_info_view(request,id):
 		'instructors':instructors,
 		'students':students,
 		'announcements':announcements,
+		'lectures':lectures,
+
+		'assignment_per':assignment_per,
+		'quizes_per':quizes_per,
+		'mid_per':mid_per,
+		'final_per':final_per,
+		'total_per':total_per,
+		'grade':grade,
 
 	}
 	return render(request, 'classes/s_class_info.html',context)
@@ -301,6 +539,8 @@ def delete_assignment_view(request,class_id,assignment_id):
 	}
 	return render(request,'classes/delete_assignment.html',context)
 
+
+@login_required
 def delete_notification_view(request,notification_id):
 	notification = Notification.objects.get(id=notification_id)
 	notification.viewed = True
@@ -308,13 +548,16 @@ def delete_notification_view(request,notification_id):
 	return redirect('create_class')
 
 
+
+@login_required
 def s_assignment_detail_view(request,class_id,assignment_id):
 	classroom = ClassRoom.objects.get(id=class_id)
 	assignment = Assignment.objects.get(id=assignment_id)
 	submission_form = SubmitAssignment()
+	student = Student.objects.get(student=request.user,class_room=classroom)
 	
-	if Submission.objects.filter(user=request.user,assignment=assignment).exists():
-		s_submission = Submission.objects.get(user=request.user,assignment=assignment)
+	if Submission.objects.filter(student=student,assignment=assignment).exists():
+		s_submission = Submission.objects.get(student=student,assignment=assignment)
 		submission_form = SubmitAssignment(instance=s_submission)
 	else:
 		s_submission = ''
@@ -324,7 +567,7 @@ def s_assignment_detail_view(request,class_id,assignment_id):
 			submission_form = SubmitAssignment(request.POST,request.FILES)
 			if submission_form.is_valid():
 				instance = submission_form.save(commit=False)
-				instance.user = request.user
+				instance.student = student
 				instance.assignment = Assignment.objects.get(id=assignment_id)
 				instance.save()
 				messages.success(request, 'Assignment submitted successfully')
@@ -344,6 +587,8 @@ def s_assignment_detail_view(request,class_id,assignment_id):
 	}
 	return render(request,'classes/s_assignment_detail.html',context)
 
+
+@login_required
 def attendance_view(request,class_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	students = Student.objects.filter(class_room=class_room)
@@ -388,6 +633,8 @@ def attendance_view(request,class_id):
 	}
 	return render(request,'classes/attendance.html',context)
 
+
+@login_required
 def view_attendance(request,class_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	if request.method=="POST":
@@ -398,6 +645,8 @@ def view_attendance(request,class_id):
 		attendances = Attendance.objects.filter(class_room=class_room)
 		return render(request,'classes/view_attendance.html',{"data":attendances,"class_room":class_room})
 
+
+@login_required
 def edit_attendance(request,class_id,att_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	attendance = Attendance.objects.get(id=att_id)
@@ -410,3 +659,94 @@ def edit_attendance(request,class_id,att_id):
 			return redirect('http://127.0.0.1:8000/classes/class_info/'+str(class_id)+'/view_attendance')
 
 	return render(request,'classes/edit_attendance.html',{'edit_att_form':edit_att_form,'attendance':attendance,'class_room':class_room})
+
+
+
+import xlwt
+from django.http import HttpResponse
+
+
+
+
+@login_required
+def export_attendance_xls(request,class_id):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'filename="Attendance.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Attendance Data') # this will make a sheet named Attendance Data
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    class_room = ClassRoom.objects.get(id=class_id)
+    columns = ['Student Name','Attendance Date','Present','Absent']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = Attendance.objects.filter(class_room=class_room)
+    rows = rows.extra(select={'datestr':"to_char(created_at, 'YYYY-MM-DD')"})
+    rows = rows.values_list('student__student__first_name', 'datestr', 'present', 'absent')
+    
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+
+    return response
+
+
+def rate(request,class_id):
+	class_room = ClassRoom.objects.get(id=class_id)
+	user = request.user
+	reviews = Review.objects.filter(class_room=class_room)
+
+	total_reviews = reviews.count()
+	master_piece = (Review.objects.filter(class_room=class_room,rate=10).count()/total_reviews)*100
+	perfect = (Review.objects.filter(class_room=class_room,rate=9).count()/total_reviews)*100
+	very_good = (Review.objects.filter(class_room=class_room,rate=8).count()/total_reviews)*100
+	good = (Review.objects.filter(class_room=class_room,rate=7).count()/total_reviews)*100
+	understandable = (Review.objects.filter(class_room=class_room,rate=6).count()/total_reviews)*100
+	ok = (Review.objects.filter(class_room=class_room,rate=5).count()/total_reviews)*100
+	bad = (Review.objects.filter(class_room=class_room,rate=4).count()/total_reviews)*100
+	terible = (Review.objects.filter(class_room=class_room,rate=3).count()/total_reviews)*100
+	horible = (Review.objects.filter(class_room=class_room,rate=2).count()/total_reviews)*100
+	trash = (Review.objects.filter(class_room=class_room,rate=1).count()/total_reviews)*100
+
+	if request.method == 'POST':
+		form = RateForm(request.POST)
+		if form.is_valid():
+			rate = form.save(commit=False)
+			rate.user = user
+			rate.class_room = class_room
+			rate.save()
+			messages.success(request, 'Review added successfully')
+			return HttpResponseRedirect(reverse('s_class_info', args=[class_id]))
+	else:
+		form = RateForm()
+
+	context = {
+		'form':form,
+		'class':class_room,
+		'reviews':reviews,
+		'master_piece':master_piece,
+		'perfect':perfect,
+		'very_good':very_good,
+		'good':good,
+		'understandable':understandable,
+		'ok':ok,
+		'bad':bad,
+		'terible':terible,
+		'horible':horible,
+	}
+
+	return render(request,'classes/rate.html',context)

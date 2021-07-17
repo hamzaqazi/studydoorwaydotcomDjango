@@ -15,10 +15,15 @@
 		<div class="card-body">
 			<h5 class="card-title">{{obj.name}}</h5>
 			<div class="card-text">
-				Score to pass : {{obj.required_score_to_pass}} %
+				Required Score to pass : {{obj.required_score_to_pass}} %
 			</div>
+			<div class="text-right" id="timer-box"></div>
+			<a href="{% url 's_class_info' class_room.id %}" class="btn btn-danger">go back</a>
 		</div>	
 	</div>
+
+
+
 
 	<!-- <div class="card-header"><legend>{{obj.name}}</legend></div> -->
 	<form id="quiz-form">

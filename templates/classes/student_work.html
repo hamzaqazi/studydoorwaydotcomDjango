@@ -31,15 +31,15 @@
             </div>
             <div class="card-header d-flex align-items-center">
               	<div class="container ml-1 mt-1">
-					<h6>Turned in Students <span class="badge badge-dark">{{submissions.count}}</span></h6>
-				</div>
+									<h6>Turned in Students <span class="badge badge-dark">{{submissions.count}}</span></h6>
+								</div>
             </div>
             <div class="card-body no-padding">
             	{% for submission in submissions %}
               <div class="item d-flex align-items-center">
-                <div class="image"><img src="{{submission.user.userprofile.profile_pic.url}}" alt="..." class="img-fluid rounded-circle"></div>
+                <div class="image"><img src="{{submission.student.student.userprofile.profile_pic.url}}" alt="..." class="img-fluid rounded-circle"></div>
                 <div class="text"><a href="#">
-                    <h3 class="h5">{{submission.user}}</h3></a><small>Submitted at. {{submission.submitted_at}}</small></div>
+                    <h3 class="h5">{{submission.student}}</h3></a><small>Submitted at. {{submission.submitted_at}}</small></div>
               </div>
               {% endfor %}
             </div>
@@ -75,26 +75,26 @@
             	</div>
             	{% for submission in submissions %}
               <div class="item d-flex align-items-center col-md-5">
-                <div class="image"><img src="{{submission.user.userprofile.profile_pic.url}}" alt="..." class="img-fluid rounded-circle">
+                <div class="image"><img src="{{submission.student.student.userprofile.profile_pic.url}}" alt="..." class="img-fluid rounded-circle">
                 </div>
                 <div class="text"><a href="#">
-                    <h3 class="h5">{{submission.user}}</h3></a><small>Submitted at. {{submission.submitted_at}}</small>
+                    <h3 class="h5">{{submission.student}}</h3></a><small>Submitted at. {{submission.submitted_at}}</small>
                 </div>
               </div>
               <div class="row">
 	            <div class="col-md-4">
 	            	<div class="card rounded p-1 " style="background-color:#ebdecc;font-size:small;">
 	            		<p class="text-center">
-						<span style="color:tomato"><i class="fas fa-file-alt fa-2x"></i></span>
-						<a href="{{ submission.file.url }}">Download File</a>
-						{{submission.file|getfilename}}
-						</p>
+										<span style="color:tomato"><i class="fas fa-file-alt fa-2x"></i></span>
+										<a href="{{ submission.file.url }}">Download File</a>
+										{{submission.file|getfilename}}
+									</p>
 	            	</div>
 	            </div>
 	            <div class="col-md-3">
 	            	<div class="card rounded p-1">
 	            		<h6>Points</h6>
-	            		{% if submission.grade != 'No grade yet' %}
+	            		{% if submission.grade != 000 %}
 		                  <div class="row">
 		                  	<div class="col-md-6 text-center" style="font-size:22px;">{{ submission.grade }}/{{submission.assignment.points}}</div>
 		                  	<div style="border-left:1px solid tomato"></div>
