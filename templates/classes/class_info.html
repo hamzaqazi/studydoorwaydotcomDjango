@@ -521,7 +521,7 @@
 					              		</div>
 					              		<div class="row">
 					              			{% for sub in s.submission_set.all %}
-					              			<div class="col-sm-3">
+					              			<div class="col-sm-3"  onclick="location.href='{% url 'student_work' class.id sub.assignment.id %}';" style="cursor: pointer;">
 										      <div class="card-counter primary">
 										        <i class="fa fa-file-text-o"></i>
 										        <span class="count-numbers">{{sub.grade}}/{{sub.assignment.points}}</span>

@@ -47,10 +47,7 @@
 			<table class="table table-sm table-hover text-nowrap ">
 				<thead class="thead-light">
 					<tr>
-						<th>ID</th>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>User Name</th>
+						<th>Student Name</th>
 						<th>Date Joined</th>
 						<th>Email</th>
 						<th>Attendance</th>
@@ -60,10 +57,7 @@
 					{% csrf_token %}
 					{% for student in students %}
 					<tr>
-						<td>{{student.id}}</td>
-						<td>{{student.student.first_name}}</td>
-						<td>{{student.student.last_name}}</td>
-						<td>{{student.student.username}}</td>
+						<td>{{student.student.first_name}} {{student.student.last_name}}</td>
 						<td>{{student.added_at}}</td>
 						<td>{{student.student.email}}</td>
 						<td>

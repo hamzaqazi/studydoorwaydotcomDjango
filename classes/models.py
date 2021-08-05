@@ -130,8 +130,7 @@ class Notification(models.Model):
  
 class Attendance(models.Model):
 	class_room = models.ForeignKey(ClassRoom, on_delete=models.DO_NOTHING)
-	present = models.BooleanField(default=False)
-	absent = models.BooleanField(default=False)
+	attendance=models.CharField(max_length=10,null=True)
 	created_at = models.DateField()
 	student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
 

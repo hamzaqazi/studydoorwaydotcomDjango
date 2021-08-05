@@ -4,7 +4,7 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
-from .views import home 
+from .views import home,about_us_view
 from chat.views import getMessages
 from rest_framework import routers
 from accounts.views import (
@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('quizes.urls',namespace='quizes')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('',home,name='home'),
+    path('about_us/',about_us_view,name='about_us'),
     path('accounts/login/', login_view,name='login'),
     path('accounts/signup/', register_view,name='signup'),
     path('accounts/logout/', logout_view,name='logout'),

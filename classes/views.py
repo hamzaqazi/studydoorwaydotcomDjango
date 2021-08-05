@@ -26,6 +26,7 @@ def render_pdf_view(request,class_id,s_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	students = Student.objects.filter(class_room=class_room)
 	assignments = Assignment.objects.filter(class_room=class_room)
+	quizes = Quiz.objects.filter(class_room=class_room)
 	mid_final_marks = MidFinalMarks.objects.get(class_room=class_room,student=student)
 
 	total_quizes_points = Quiz.objects.filter(class_room=class_room).count()*100
@@ -73,6 +74,8 @@ def render_pdf_view(request,class_id,s_id):
 		'mid_per':mid_per,
 		'final_per':final_per,
 		'students':students,
+		'assignments':assignments,
+		'quizes':quizes,
 	}
 	 # Create a Django response object, and specify content_type as pdf
 	response = HttpResponse(content_type='application/pdf')
@@ -277,7 +280,11 @@ def class_info_view(request,id):
 				return redirect('class_info',id=id)
 			else:
 				messages.warning(request, create_class_form.errors)
-
+		# if 'delete_class' in request.POST:
+		# 	class_room = ClassRoom.objects.get(id=id)
+		# 	class_room.delete()
+		# 	messages.warning(request, 'Assignment deleted successfully')
+		# 	return render(request,'classes/create_class.html')
 		if 'create_assignment' in request.POST:
 			create_assignment_form = CreateAssignment(request.POST, request.FILES)
 			if create_assignment_form.is_valid():
@@ -382,7 +389,7 @@ def add_question_view(request,class_id,quiz_id):
 def student_work_view(request,class_id,assignment_id):
 	class_room = ClassRoom.objects.get(id=class_id)
 	assignment = Assignment.objects.get(id=assignment_id)
-	submissions = assignment.submissions.all().order_by('-submitted_at')
+	submissions = assignment.submissions.all()
 	ungraded_sub = assignment.submissions.filter(grade=000).count()
 	grade_form = GradeForm(request.POST or None)
 	feedback_form = FeedbackForm(request.POST or None)
@@ -610,19 +617,19 @@ def attendance_view(request,class_id):
 
 		for pid in present_ids:
 			student = Student.objects.get(pk=pid)
-			Attendance.objects.create(student=student,present=True,class_room=class_room,created_at=created_at)
+			Attendance.objects.create(student=student,attendance='P',class_room=class_room,created_at=created_at)
 		for aid in absent_ids:
 			student = Student.objects.get(pk=aid)
-			Attendance.objects.create(student=student,absent=True,class_room=class_room,created_at=created_at)
+			Attendance.objects.create(student=student,attendance='A',class_room=class_room,created_at=created_at)
 
 		messages.success(request,'Attendance submitted successfully')
-		ps = Attendance.objects.filter(present=True)
-		present_s = []
-		for pr_s in ps:
-			present_s.append((pr_s.student.student.first_name, pr_s.present,pr_s.created_at))
-		return JsonResponse({
-			'attendance':list(present_s),
-		})
+		# ps = Attendance.objects.filter(present=True)
+		# present_s = []
+		# for pr_s in ps:
+		# 	present_s.append((pr_s.student.student.first_name, pr_s.present,pr_s.created_at))
+		# return JsonResponse({
+		# 	'attendance':list(present_s),
+		# })
 			
 		
 
@@ -682,17 +689,45 @@ def export_attendance_xls(request,class_id):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
     class_room = ClassRoom.objects.get(id=class_id)
-    columns = ['Student Name','Attendance Date','Present','Absent']
+    attendances = Attendance.objects.filter(class_room=class_room)
+    att_dates = []
+    for att in attendances:
+    	att_dates.append(att.created_at)
+    columns = ['Student Name','Date','Attendance']
+
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # for col_num in range(len(att_dates)):
+    # 	ws.write(row_num, col_num, att_dates[col_num], font_style)
+    # students = Student.objects.filter(class_room=class_room)
+
+    # attendances= Attendance.objects.filter(class_room=class_room)
+    # att=[]
+    # for a in attendances:
+    # 	att.append(a.created_at)
+
+    # att= list(set(att))
+   
+
+
+
+    # context = {
+    # 	'students':students,
+    # 	'att':att,
+    # }
+
+    # return render(request,'classes/example.html',context)
+
+
 
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
 
     rows = Attendance.objects.filter(class_room=class_room)
     rows = rows.extra(select={'datestr':"to_char(created_at, 'YYYY-MM-DD')"})
-    rows = rows.values_list('student__student__first_name', 'datestr', 'present', 'absent')
+    rows = rows.values_list('student__student__first_name', 'datestr','attendance')
     
 
     for row in rows:

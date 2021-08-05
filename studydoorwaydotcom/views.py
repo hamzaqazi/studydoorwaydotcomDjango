@@ -23,3 +23,6 @@ def home(request):
 		'notifications':notifications,
 	}
 	return render(request, 'home.html',context)
+
+def about_us_view(request):
+	return render(request, 'about_us.html')

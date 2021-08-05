@@ -124,7 +124,7 @@ class AttendanceForm(ModelForm):
 class EditAttendanceForm(ModelForm):
 	class Meta:
 		model = Attendance
-		fields = ['present','absent']
+		fields = ['attendance']
 
 
 class MidFinalMarksForm(ModelForm):

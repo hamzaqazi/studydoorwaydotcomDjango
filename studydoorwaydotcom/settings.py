@@ -125,7 +125,7 @@ WSGI_APPLICATION = 'studydoorwaydotcom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'studydoorway_newdb',
+        'NAME': 'studydoorway_newdatabase',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
